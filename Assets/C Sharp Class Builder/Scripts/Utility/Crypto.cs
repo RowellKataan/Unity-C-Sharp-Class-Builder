@@ -23,10 +23,10 @@ public class Crypto
 
 	#region "PRIVATE VARIABLES"
 
-		private static string strDefaultKey        = "12345678901234567890123456789012";
 
 		//                                           |      ENCRYPTION KEY SIZE       |  (32 Characters)
 		//                                           |================================|
+		private static string strDefaultKey        = "12345678901234567890123456789012";
     private static string strDefaultVpadding   = "12345678901234567890123456789012";
     private static string strDefaultPadding    = "12345678901234567890123456789012";
 
@@ -49,10 +49,10 @@ public class Crypto
 				if (strDefaultKey      == "") 
 				{
 
-					strDefaultKey = "1234567890123456";
+					strDefaultKey = "12345678901234567890123456789012";
 				
 				}
-			} catch { strDefaultKey        = "1234567890123456"; }									// 16 CHARACTERS
+			} catch { strDefaultKey        = "12345678901234567890123456789012"; }	// 32 CHARACTERS
 			try 
 			{
 				if (strDefaultVpadding == "")
@@ -98,10 +98,10 @@ public class Crypto
 				if (intDefaultIterations < 1) 
 				{
 
-					intDefaultIterations = 572;
+					intDefaultIterations = 1000;
 
 				}
-			} catch { intDefaultIterations = 572; }
+			} catch { intDefaultIterations = 1000; }
 		}
 		
 	#endregion
