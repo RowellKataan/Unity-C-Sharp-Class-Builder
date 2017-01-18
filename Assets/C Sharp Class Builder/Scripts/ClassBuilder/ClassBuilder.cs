@@ -521,8 +521,8 @@ namespace CBT
 			public	string			Namespace						{ get { return _strNamespace;						} set { _strNamespace = value.Trim(); } }
 			public	bool				IsInitialized				{ get { return _blnInitialized;					} set { _blnInitialized = value; } }
 			public	bool				UseUnity						{ get { return _blnUseUnity;						} set { _blnUseUnity = value; } }
-			public	bool				IsANetworkObject		{ get { return _blnIsNetworkObject;			} set { _blnIsNetworkObject = value; } }
-			public	bool				HasNetworkTransform	{	get { return _blnHasNetworkTransform;	} set { _blnHasNetworkTransform = value; } }
+			public	bool				IsANetworkObject		{ get { return _blnIsNetworkObject			&& _blnUseNetMgr;	} set { _blnIsNetworkObject = value; } }
+			public	bool				HasNetworkTransform	{	get { return _blnHasNetworkTransform	&& _blnUseNetMgr;	} set { _blnHasNetworkTransform = value; } }
 			public	bool				UseUnityUI					{ get { return _blnUseUnityUI;					} set { _blnUseUnityUI = value; } }
 			public	bool				UseEditor						{ get { return _blnUseEditor;						} set { _blnUseEditor = value; } }
 			public	bool				UseDatabase					{ get { return _blnUseDatabase;					} set { _blnUseDatabase = value; } }
@@ -588,7 +588,7 @@ namespace CBT
 						#if UNITY_EDITOR
 						db = AssetDatabase.LoadAssetAtPath(strDBfullPath, typeof(BaseDatabase<ClassBuilder>)) as BaseDatabase<ClassBuilder>;
 						#else
-							db = Resources.GetBuiltinResource(typeof(BaseDatabase<ClassBuilder>), strDBfullPath) as BaseDatabase<ClassBuilder>;
+						db = Resources.GetBuiltinResource(typeof(BaseDatabase<ClassBuilder>), strDBfullPath) as BaseDatabase<ClassBuilder>;
 						#endif
 					}
 
@@ -1010,6 +1010,8 @@ namespace CBT
 							_strFileData += "	=	\"" + Variables[i].StartingValue + "\";\n";
 						else if (Variables[i].VarType.ToLower() == "float")
 							_strFileData += "	=	" + Variables[i].StartingValue + "f;\n";
+						else if (Variables[i].VarType.ToLower().StartsWith("enum"))
+							_strFileData += " = (" + GetPropertyType(Variables[i]) + ") " + Variables[i].StartingValue + ";\n";
 						else
 							_strFileData += "	=	" + Variables[i].StartingValue + ";\n";
 					}
@@ -1347,7 +1349,7 @@ namespace CBT
 					// BUILD SAVING FUNCTIONS
 					if (UseDBsave)
 					{ 
-						_strFileData += "		public	virtual		void	Save()\n		{\n";
+						_strFileData += "		public	virtual		bool	Save()\n		{\n";
 						_strFileData += "			if (" + DatabaseCall + "IsConnected)\n";
 						_strFileData += "			{\n";
 						_strFileData += "				// UPDATE TO THE DATABASE TABLE\n";
@@ -1367,8 +1369,11 @@ namespace CBT
 						{
 							_strFileData += "				if (" + st + " != n)\n";
 							_strFileData += "					" + st + " = n;\n";
+							_strFileData += "				if (" + st + " > 0)\n";
+							_strFileData += "					return true;\n";
 						}
 						_strFileData += "			}\n";
+						_strFileData += "			return false;\n";
 						_strFileData += "		}\n";
 					}
 					_strFileData += "\n	#endregion\n\n";
@@ -1600,9 +1605,9 @@ namespace CBT
 
 					if (UseDBsave)
 					{ 
-						_strFileData += "		public	override	void	Save()\n		{\n";
+						_strFileData += "		public	override	bool	Save()\n		{\n";
 						_strFileData += "			// YOU CAN COMMENT THIS LINE OUT, AND BUILD YOUR OWN CUSTOM SAVE FUNCTION\n";
-						_strFileData += "			base.Save();\n";
+						_strFileData += "			return base.Save();\n";
 						_strFileData += "		}\n";
 					}
 
