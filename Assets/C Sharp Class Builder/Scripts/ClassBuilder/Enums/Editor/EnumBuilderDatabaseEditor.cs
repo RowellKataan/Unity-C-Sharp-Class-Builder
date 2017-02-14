@@ -10,7 +10,6 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Text.RegularExpressions;
 
 namespace CBT
@@ -21,8 +20,6 @@ namespace CBT
 
 		#region "PRIVATE/PROTECTED CONSTANTS"
 
-			protected const			int			MINIMUM_WIDTH						= 600;
-			protected const			int			MINIMUM_HEIGHT					= 400;
 			private 	const			string	WINDOW_TITLE						= "Enum Builder";
 			private		const			string	MENU_NAME								= "Tools/Enum Builder";
 			private		const			string	dDATABASE_FILE_NAME			= @"EnumDatabase.asset";	
@@ -30,8 +27,6 @@ namespace CBT
 		#endregion
 
 		#region "PRIVATE VARIABLES"
-
-			private		int							_intSelectedEnum	= -1;
 
 			[System.NonSerialized]
 			private		string					_strNewName				= "";
@@ -41,8 +36,6 @@ namespace CBT
 
 			[System.NonSerialized]
 			private		int							_intSelected			= 0;
-			[System.NonSerialized]
-			private		Vector2					_v2ScrollPosition;
 
 		#endregion
 
@@ -85,15 +78,6 @@ namespace CBT
 
 		#region "PRIVATE FUNCTIONS"
 
-			private		int													GetIndex(string[] strArray, string strSelected)
-			{
-				for (int i = 0; i < strArray.Length; i++)
-				{
-					if (strSelected == strArray[i])
-						return i;
-				}
-				return 0;
-			}
 			protected	bool												EnumExistsInClass(string strVar)
 			{
 				BaseDatabase<ClassBuilder> cb = ClassBuilder.LoadDatabase();

@@ -10,7 +10,6 @@
 
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
 
 namespace CBT
 { 
@@ -20,10 +19,10 @@ namespace CBT
 
 		#region "PRIVATE/PROTECTED CONSTANTS"
 
-			protected const		int				MINIMUM_WIDTH						= 270;
-			protected const		int				MINIMUM_HEIGHT					= 300;
+			protected const		int				MINIMUM_WIDTH						= 500;
+			protected const		int				MINIMUM_HEIGHT					= 600;
 			protected	const		string		APP_ROOT_DIRECTORY			= "C Sharp Class Builder/";
-			protected	const		string		DATABASE_FILE_DIRECTORY	= APP_ROOT_DIRECTORY + "Scripts/ClassBuilder/Database";
+			protected					string		DATABASE_FILE_DIRECTORY	= APP_ROOT_DIRECTORY + "Scripts/ClassBuilder/Database";
 			protected					string		DATABASE_FILE_NAME			= @"XXX.asset";
 
 		#endregion
@@ -35,6 +34,45 @@ namespace CBT
 			protected	bool									_blnIsInitializing		= false;
 			private		bool									_blnIsInitialized			= false;
 			protected	bool									_blnNote							= false;
+
+			[System.NonSerialized]
+			protected	BaseDatabase<EnumBuilder>	_dbEnums		= null;
+			[System.NonSerialized]
+			protected	string[]				_strEnumList					= null;
+			[System.NonSerialized]
+			protected	string[]				_strEnumDefList				= null;
+			[System.NonSerialized]
+			protected	int							_intSelectedEnum			= -1;
+
+		#endregion
+
+		#region "PRIVATE PROPERTIES"
+
+			protected		BaseDatabase<EnumBuilder>		DBenums
+			{
+				get
+				{
+					if (_dbEnums == null)
+							_dbEnums = EnumBuilder.LoadDatabase();
+					return _dbEnums;
+				}
+			}
+			protected		string[]										EnumArray
+			{
+				get
+				{
+					if (_strEnumList == null)
+							_strEnumList = CreateEnumPopUpList(DBenums);
+					return _strEnumList;
+				}
+			}
+			protected		string[]										EnumDefaultArray
+			{
+				get
+				{
+					return _strEnumDefList;
+				}
+			}
 
 		#endregion
 
@@ -116,41 +154,137 @@ namespace CBT
 			}
 			protected						void	LoadDatabase()
 			{
-				if (editorDB != null && ((BaseDatabase<R>)(object)editorDB).IsDatabaseLoaded)
-					return;
-
-				string strDBfullPath = @"Assets/" + DATABASE_FILE_DIRECTORY + "/" + DATABASE_FILE_NAME;
-				editorDB = ScriptableObject.CreateInstance<D>();
-
-				if(!System.IO.Directory.Exists(@"Assets/" + DATABASE_FILE_DIRECTORY))
+				try
 				{
-					System.IO.Directory.CreateDirectory(@"Assets/" + DATABASE_FILE_DIRECTORY);
-				} else {
-					#if UNITY_EDITOR
-						editorDB = AssetDatabase.LoadAssetAtPath(strDBfullPath, typeof(D)) as D;
-					#else
-						editorDB = Resources.GetBuiltinResource(typeof(D), strDBfullPath) as D;
-					#endif
+					if (editorDB != null && ((BaseDatabase<R>)(object)editorDB).IsDatabaseLoaded)
+						return;
 
-				}
-
-				#if UNITY_EDITOR
-				if (editorDB == null)
-				{
+					string strDBfullPath = @"Assets/" + DATABASE_FILE_DIRECTORY + "/" + DATABASE_FILE_NAME;
 					editorDB = ScriptableObject.CreateInstance<D>();
-					AssetDatabase.CreateAsset(editorDB, strDBfullPath);
-					AssetDatabase.SaveAssets();
-					AssetDatabase.Refresh();
+
+					if(!System.IO.Directory.Exists(@"Assets/" + DATABASE_FILE_DIRECTORY))
+					{
+						System.IO.Directory.CreateDirectory(@"Assets/" + DATABASE_FILE_DIRECTORY);
+					} else {
+						#if UNITY_EDITOR
+							editorDB = AssetDatabase.LoadAssetAtPath(strDBfullPath, typeof(D)) as D;
+						#else
+							editorDB = Resources.GetBuiltinResource(typeof(D), strDBfullPath) as D;
+						#endif
+
+					}
+
+					#if UNITY_EDITOR
+					if (editorDB == null)
+					{
+						editorDB = ScriptableObject.CreateInstance<D>();
+						AssetDatabase.CreateAsset(editorDB, strDBfullPath);
+						AssetDatabase.SaveAssets();
+						AssetDatabase.Refresh();
+					}
+					#endif
+					((BaseDatabase<R>)(object)editorDB).IsDatabaseLoaded = (editorDB != null);
+				} catch (System.Exception ex) {
+					Debug.LogError("Error: " + ex.Message + "\n" + ex.InnerException); 
 				}
-				#endif
-				((BaseDatabase<R>)(object)editorDB).IsDatabaseLoaded = (editorDB != null);
 			}
 
 		#endregion
 
 		#region "PRIVATE FUNCTIONS"
 
-			protected virtual	void		DisplayEditor()
+			protected virtual	int				GetIndex(string[] strArray, string strSelected)
+			{
+				for (int i = 0; i < strArray.Length; i++)
+				{
+					if (strSelected == strArray[i])
+						return i;
+				}
+				return 0;
+			}
+			protected virtual	string[]	CreateEnumPopUpList(BaseDatabase<EnumBuilder>	db, bool blnIncludeAll = false, bool blnIncludeNone = false)
+			{
+				if (db == null || db.Count < 1)
+					if (blnIncludeAll)
+						return new string[] { "-- All -- "};
+					else
+						return new string[] {  };
+
+				string[] st = new string[] { };
+
+				if (blnIncludeAll)
+				{
+					st = new string[db.Count + 1];
+					st[0] = "-- All --";
+					for (int i = 0; i < db.Count; i++)
+					{
+						st[i + 1] = db.database[i].Name;
+					}
+				} else if (blnIncludeAll)
+				{
+					st = new string[db.Count + 1];
+					st[0] = "-- None --";
+					for (int i = 0; i < db.Count; i++)
+					{
+						st[i + 1] = db.database[i].Name;
+					}
+				} else {
+					st = new string[db.Count];
+					for (int i = 0; i < db.Count; i++)
+					{
+						st[i] = db.database[i].Name;
+					}
+				}
+
+				return st;
+			}
+			protected virtual	string[]	CreateEnumDefaultPopUpListByID(BaseDatabase<EnumBuilder>	db, int intField)
+			{
+				if (db == null || db.Count < 1)
+					return new string[] { };
+
+				if (intField < 0 || intField > db.Count - 1)
+					return new string[] { };
+
+				string[] st = new string[] { };
+
+				st = new string[db.database[intField].Variables.Count];
+				for (int i = 0; i < db.database[intField].Variables.Count; i++)
+				{
+					st[i] = db.database[intField].Variables[i].Name;
+				}
+
+				return st;
+			}
+			protected virtual	string[]	CreateEnumDefaultPopUpListByName(BaseDatabase<EnumBuilder>	db, string strEnumName)
+			{
+				strEnumName = strEnumName.Replace("enum", "");
+				if (db == null || db.Count < 1 || strEnumName == "")
+					return new string[] { };
+				
+				int intField = -1;
+				for (int i = 0; i < db.Count; i++)
+					if (db.database[i].Name == strEnumName)
+					{
+						intField = i;
+						break;
+					}
+
+				if (intField < 0 || intField > db.Count - 1)
+					return new string[] { };
+
+				string[] st = new string[] { };
+
+				st = new string[db.database[intField].Variables.Count];
+				for (int i = 0; i < db.database[intField].Variables.Count; i++)
+				{
+					st[i] = db.database[intField].Variables[i].Name;
+				}
+
+				return st;
+			}
+
+			protected virtual	void			DisplayEditor()
 			{
 				DisplayEditorTop();
 /*
@@ -158,12 +292,10 @@ namespace CBT
 
 				if (editorDB is BaseDatabase<BaseDescriptor>	&& selected is BaseDescriptor)
 				{
-																			EditorGUILayout.LabelField(						"ID: ",				theObject.ID.ToString());
-					theObject.Name						= EditorGUILayout.TextField(						"Name: ",			theObject.Name);
-					theObject.Icon						= (Sprite) EditorGUILayout.ObjectField(	"Icon: ",			theObject.Icon, typeof(Sprite));
-																			EditorGUILayout.TextField(						"Path: ",			theObject.IconPath);
-					theObject.DescColor				= (Color)	 EditorGUILayout.ColorField(	"Color: ",		theObject.DescColor);
-					theObject.Modifier				= EditorGUILayout.FloatField(						"Modifier: ",	theObject.Modifier);
+					EditorGUILayout.LabelField(						"ID: ",				theObject.ID.ToString());
+
+					// ADD IN YOU OWN CUSTOM DATA INPUTS IN SOME OTHER CLASS-SPECIFIC FILE
+					// DON'T CHANGE THIS CODE/FILE AT ALL!!!
 
 					GUILayout.EndVertical();
 					GUILayout.Space(10);
@@ -182,7 +314,7 @@ namespace CBT
 */
 				DisplayEditorBottom();
 			}
-			protected virtual void		DisplayCount()
+			protected virtual void			DisplayCount()
 			{
 				GUILayout.BeginHorizontal("Box", GUILayout.ExpandWidth(true));
 
@@ -198,12 +330,12 @@ namespace CBT
 				GUILayout.EndHorizontal();
 			}
 
-			protected					void		DisplayEditorTop()
+			protected					void			DisplayEditorTop()
 			{
 				GUILayout.BeginVertical();
 				GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 			}
-			protected					void		DisplayEditorBottom()
+			protected					void			DisplayEditorBottom()
 			{
 				GUILayout.Space(10);
 				if (GUILayout.Button("CANCEL"))
