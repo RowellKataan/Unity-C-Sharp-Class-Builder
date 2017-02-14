@@ -25,7 +25,7 @@ namespace CBT
 
 		#region "PRIVATE VARIABLES"
 
-			private		Vector2		_v2ScrollPosition;
+			protected	Vector2		_v2ScrollPosition			= Vector2.zero;
 			protected	bool			_blnSaveCtrlKey				= false;
 
 		#endregion
