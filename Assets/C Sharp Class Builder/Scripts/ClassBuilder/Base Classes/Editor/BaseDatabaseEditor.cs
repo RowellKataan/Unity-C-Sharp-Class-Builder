@@ -190,9 +190,15 @@ namespace CBT
 			}
 
 		#endregion
+<<<<<<< HEAD
 
 		#region "PRIVATE FUNCTIONS"
 
+=======
+
+		#region "PRIVATE FUNCTIONS"
+
+>>>>>>> origin/master
 			protected virtual	int				GetIndex(string[] strArray, string strSelected)
 			{
 				for (int i = 0; i < strArray.Length; i++)
@@ -209,9 +215,15 @@ namespace CBT
 						return new string[] { "-- All -- "};
 					else
 						return new string[] {  };
+<<<<<<< HEAD
 
 				string[] st = new string[] { };
 
+=======
+
+				string[] st = new string[] { };
+
+>>>>>>> origin/master
 				if (blnIncludeAll)
 				{
 					st = new string[db.Count + 1];
@@ -274,6 +286,7 @@ namespace CBT
 					return new string[] { };
 
 				string[] st = new string[] { };
+<<<<<<< HEAD
 
 				st = new string[db.database[intField].Variables.Count];
 				for (int i = 0; i < db.database[intField].Variables.Count; i++)
@@ -284,6 +297,18 @@ namespace CBT
 				return st;
 			}
 
+=======
+
+				st = new string[db.database[intField].Variables.Count];
+				for (int i = 0; i < db.database[intField].Variables.Count; i++)
+				{
+					st[i] = db.database[intField].Variables[i].Name;
+				}
+
+				return st;
+			}
+
+>>>>>>> origin/master
 			protected virtual	void			DisplayEditor()
 			{
 				DisplayEditorTop();
