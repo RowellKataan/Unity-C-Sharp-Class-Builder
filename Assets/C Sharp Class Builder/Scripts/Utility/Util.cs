@@ -304,6 +304,16 @@ public class Util : MonoBehaviour
 			} catch { Debug.LogError("Error in ConvertToQuaternion. " + strInput); }
 			return q3;
 		}
+		public static Color						ConvertToColor(				string strInput)
+		{
+			string[] str = strInput.Split(","[0]);
+			Color outp = Color.black;
+			for (int i = 0; i < str.Length; i++) 
+			{
+				outp[i] = float.Parse(str[i]);
+			}
+			return outp;
+     }
 		public static string					ConvertSecondsToTime(	float	intInput, bool blnLongDisplay = false)
 		{
 			string st = "";

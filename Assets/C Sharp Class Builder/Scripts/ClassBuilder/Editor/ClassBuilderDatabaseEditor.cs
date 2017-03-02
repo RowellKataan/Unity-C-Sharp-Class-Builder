@@ -49,7 +49,7 @@ namespace CBT
 			[System.NonSerialized]
 			private		int							_intSelected					= 0;
 			[System.NonSerialized]
-			private		string[]				TypeArray							= { "int", "string", "bool", "float", "enum", "DateTime", "Vector2", "Vector3", "Quaternion", "Sprite" };
+			private		string[]				TypeArray							= { "int", "string", "bool", "float", "enum", "DateTime", "Vector2", "Vector3", "Quaternion", "Sprite", "Color" };
 
 			[System.NonSerialized]
 			private		string					strTemp								= "";
@@ -465,12 +465,12 @@ namespace CBT
 						_blnIsName = false;
 						EditorGUILayout.Toggle(	"", false, GUILayout.Width(40));
 					} else 
-<<<<<<< HEAD
 						_blnIsName					= EditorGUILayout.Toggle(	"", _blnIsName, GUILayout.Width(40)) && !(_intSelected==9);
-=======
-						_blnIsName					= EditorGUILayout.Toggle(	"", _blnIsName, GUILayout.Width(40));
->>>>>>> origin/master
+//					_blnIsName					= EditorGUILayout.Toggle(	"", _blnIsName, GUILayout.Width(40));
 					EditorGUILayout.EndVertical();
+					Color co = Color.white;
+					string st = co.ToString();
+
 
 					// ---- ADD BUTTON
 					EditorGUILayout.BeginVertical();

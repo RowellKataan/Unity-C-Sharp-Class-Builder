@@ -48,7 +48,7 @@ namespace CBT
 				set
 				{
 					_varType = value;
-					if (_varType.ToLower() == "vector2" || _varType.ToLower() == "vector3" || _varType.ToLower() == "quaternion")
+					if (_varType.ToLower() == "vector2" || _varType.ToLower() == "vector3" || _varType.ToLower() == "quaternion" || _varType.ToLower() == "color")
 						MaxLength = 50;
 					if (_varType.ToLower() == "sprite" || _varType.ToLower() == "image")
 						MaxLength = 300;
@@ -74,6 +74,8 @@ namespace CBT
 								return Vector3.zero.ToString();
 							case "quaternion":
 								return Quaternion.identity.ToString();
+							case "color":
+								return "Color.black";
 							case "date":
 							case "datetime":
 	//						return "01/01/1900";
@@ -122,6 +124,8 @@ namespace CBT
 							return "_v3";
 						case "quaternion":
 							return "_q3";
+						case "color":
+							return "_col";
 						case "sprite":
 						case "image":
 							return "_sprImg";
@@ -154,6 +158,8 @@ namespace CBT
 						case "sprite":
 						case "image":
 							return "null";
+						case "color":
+							return Color.black.ToString();
 					}
 					if (VarType.ToLower().StartsWith("enum"))
 						return VarType.Substring(4) + ".NONE";
@@ -184,6 +190,8 @@ namespace CBT
 							return "Util.ConvertToVector3(dr[\"" + Name.ToUpper() + "\"].ToString())";
 						case "quaternion":
 							return "Util.ConvertToQuaternion(dr[\"" + Name.ToUpper() + "\"].ToString())";
+						case "color":
+							return "Util.ConvertToColor(dr[\"" + Name.ToUpper() + "\"].ToString())";
 						case "sprite":
 						case "image":
  							return "GetSprite(ref _sprImg" + Name + ", ref _strImg" + Name + ", dr[\"" + Name.ToUpper() + "\"].ToString())";
@@ -206,6 +214,7 @@ namespace CBT
 							case "vector2":
 							case "vector3":
 							case "quaternion":
+							case "color":
 								return Name + ".ToString()";
 							default:
 								return Name;
@@ -242,6 +251,7 @@ namespace CBT
 						case "vector2":
 						case "vector3":
 						case "quaternion":
+						case "color":
 							return "VARCHAR(50)";
 						case "string":
 						default:
@@ -271,6 +281,7 @@ namespace CBT
 						case "vector3":
 						case "quaternion":
 						case "string":
+						case "color":
 						default:
 							return "VARCHAR";
 						case "int":
@@ -722,6 +733,7 @@ namespace CBT
 						case "vector2":
 						case "vector3":
 						case "quaternion":
+						case "color":
 							strSQL += "('" + prop.StartingValue + "')";
 							break;
 						case "date":
@@ -789,7 +801,8 @@ namespace CBT
 								Variables[i].VarType.ToLower() == "image" ||
 								Variables[i].VarType.ToLower() == "vector2" ||
 								Variables[i].VarType.ToLower() == "vector3" ||
-								Variables[i].VarType.ToLower() == "quaternion")
+								Variables[i].VarType.ToLower() == "quaternion" ||
+								Variables[i].VarType.ToLower() == "color")
 							_strFileData += "(" + Variables[i].MaxLength.ToString() + ")";
 						else if (Variables[i].VarType.ToLower() == "float" ||
 										 Variables[i].VarType.ToLower() == "decimal" ||
@@ -1242,7 +1255,7 @@ namespace CBT
 									_strFileData += "				theObject." + Variables[i].Name + "	= EditorGUILayout.TextField(\"" + Variables[i].Name + "\", theObject." + Variables[i].Name + ");\n";
 								break;
 							case "int":
-								if (Variables[i].IsIndex)
+								if (Variables[i].IsIndex || Variables[i].Name.ToLower() == "index")
 									_strFileData += "				EditorGUILayout.LabelField(\"" + Variables[i].Name + "\", theObject." + Variables[i].Name + ".ToString());\n";
 								else
 									_strFileData += "				theObject." + Variables[i].Name + "	= EditorGUILayout.IntField(\"" + Variables[i].Name + "\", theObject." + Variables[i].Name + ");\n";
@@ -1298,6 +1311,12 @@ namespace CBT
 								_strFileData += "				}\n\n";
 								intCnt++;
 								break;
+							case "color":
+								if (Variables[i].IsIndex)
+									_strFileData += "				EditorGUILayout.ColorField(\"" + Variables[i].Name + "\", theObject." + Variables[i].Name + ");\n";
+								else
+									_strFileData += "				theObject." + Variables[i].Name + "	= EditorGUILayout.ColorField(\"" + Variables[i].Name + "\", theObject." + Variables[i].Name + ");\n";
+								break;
 							case "date":
 							case "datetime":
 								_strFileData += "				EditorGUILayout.LabelField(\"" + Variables[i].Name + "\", theObject." + Variables[i].Name + ".ToString(\"MM/dd/yyyy HH:mm:ss\"));\n";
@@ -1334,7 +1353,7 @@ namespace CBT
 				_strFileData		+= "			}\n";
 				_strFileData		+= "			protected override	void							DisplayCount()\n";
 				_strFileData		+= "			{\n";
-				_strFileData		+= "				GUILayout.BeginHorizontal(\"Box\", GUILayout.ExpandWidth(true));\n";
+				_strFileData		+= "				try { GUILayout.BeginHorizontal(\"Box\", GUILayout.ExpandWidth(true));  } catch { }\n";
 				_strFileData		+= "				GUILayout.Label(\"Record Count: \" + ((CBT.BaseDatabase<" + this.ClassName + "Base>)(object)editorDB).Count.ToString() + \" - (Hold CTRL to Delete a Record)\");\n";
 				_strFileData		+= "				if (selected == null)\n";
 				_strFileData		+= "				{\n";
@@ -2184,6 +2203,9 @@ namespace CBT
 									case "quaternion":
 										_strFileData += "			" + Variables[i].GetPrivatePrefix + Variables[i].Name + " = Util.ConvertToQuaternion(strSpl[" + x.ToString() + "]);\n";
 										break;
+									case "color":
+										_strFileData += "			" + Variables[i].GetPrivatePrefix + Variables[i].Name + " = Util.ConvertToColor(strSpl[" + x.ToString() + "]);\n";
+										break;
 								}
 							x++;
 						}
@@ -2852,6 +2874,12 @@ namespace CBT
 								_strFileData += "			}\n\n";
 								intCnt++;
 								break;
+							case "color":
+								if (Variables[i].IsIndex)
+									_strFileData += "			EditorGUILayout.ColorField(\"" + Variables[i].Name + "\", myTarget." + Variables[i].Name + ");\n";
+								else
+									_strFileData += "			myTarget." + Variables[i].Name + "	= EditorGUILayout.ColorField(\"" + Variables[i].Name + "\", myTarget." + Variables[i].Name + ");\n";
+								break;
 							case "date":
 							case "datetime":
 								_strFileData += "			EditorGUILayout.TextField(\"" + Variables[i].Name + "\", myTarget." + Variables[i].Name + ".ToString(\"MM/dd/yyyy HH:mm:ss\"));\n";
@@ -2989,6 +3017,12 @@ namespace CBT
 									_strFileData += "					v4Temp[" + intCnt.ToString() + "] = v4[" + intCnt.ToString() + "];\n";
 									_strFileData += "				}\n\n";
 									intCnt++;
+									break;
+								case "color":
+									if (Variables[i].IsIndex)
+										_strFileData += "				EditorGUILayout.ColorField(\"" + Variables[i].Name + "\", selected." + Variables[i].Name + ");\n";
+									else
+										_strFileData += "				selected." + Variables[i].Name + "	= EditorGUILayout.ColorField(\"" + Variables[i].Name + "\", selected." + Variables[i].Name + ");\n";
 									break;
 								case "date":
 								case "datetime":
