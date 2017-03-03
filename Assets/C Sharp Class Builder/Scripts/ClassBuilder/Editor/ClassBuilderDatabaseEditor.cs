@@ -466,11 +466,7 @@ namespace CBT
 						EditorGUILayout.Toggle(	"", false, GUILayout.Width(40));
 					} else 
 						_blnIsName					= EditorGUILayout.Toggle(	"", _blnIsName, GUILayout.Width(40)) && !(_intSelected==9);
-//					_blnIsName					= EditorGUILayout.Toggle(	"", _blnIsName, GUILayout.Width(40));
 					EditorGUILayout.EndVertical();
-					Color co = Color.white;
-					string st = co.ToString();
-
 
 					// ---- ADD BUTTON
 					EditorGUILayout.BeginVertical();
