@@ -2261,10 +2261,20 @@ namespace CBT
 
 				// BUILD PRIVATE VARIABLE REGION		-----------------------------------------------
 				_strFileData += "	#region \"PRIVATE VARIABLES\"\n\n";
+				_strFileData += "		private static	List<" + this.ClassName + ">	_" + this.ClassName.ToLower() + "DB	= null;\n";
 				_strFileData += "\n	#endregion\n\n";
 
 				// BUILD PRIVATE PROPERTY REGION		-----------------------------------------------
 				_strFileData += "	#region \"PRIVATE PROPERTIES\"\n\n";
+				_strFileData += "		private static	List<" + this.ClassName + ">	" + this.ClassName + "DB\n";
+				_strFileData += "		{\n";
+				_strFileData += "			get\n";
+				_strFileData += "			{\n";
+				_strFileData += "				if (_" + this.ClassName.ToLower() + "DB == null)\n";
+				_strFileData += "						_" + this.ClassName.ToLower() + "DB = Perk.LoadEntireDatabase();\n";
+				_strFileData += "				return _" + this.ClassName.ToLower() + "DB;\n";
+				_strFileData += "			}\n";
+				_strFileData += "		}\n";
 				_strFileData += "\n	#endregion\n\n";
 
 				// BUILD PUBLIC PROPERTY REGION			-----------------------------------------------
@@ -2277,15 +2287,13 @@ namespace CBT
 				{
 					_strFileData += "		public	static	" + this.ClassName + "		FindByID(int intFind)\n";
 					_strFileData += "		{\n";
-					_strFileData += "			" + this.ClassName + " c = new " + this.ClassName + "();\n";
-					_strFileData += "			c.Clone(LoadDatabase().GetByID(intFind));\n";
+					_strFileData += "			" + this.ClassName + " c = " + this.ClassName + "DB.Find(x => x.ID == intFind);\n";
 					_strFileData += "			return c;\n";
 					_strFileData += "		}\n";
 
 					_strFileData += "		public	static	" + this.ClassName + "		FindByIndex(int intFind)\n";
 					_strFileData += "		{\n";
-					_strFileData += "			" + this.ClassName + " c = new " + this.ClassName + "();\n";
-					_strFileData += "			c.Clone(LoadDatabase().GetByIndex(intFind));\n";
+					_strFileData += "			" + this.ClassName + " c = " + this.ClassName + "DB.Find(x => x.Index == intFind);\n";
 					_strFileData += "			return c;\n";
 					_strFileData += "		}\n";
 
@@ -2379,6 +2387,10 @@ namespace CBT
 				_strFileData += "		{\n";
 				_strFileData += "		}\n";
 				_strFileData += "		public	" + this.ClassName + "(" + this.ClassName + "Base c)\n";
+				_strFileData += "		{\n";
+				_strFileData += "			this.Clone(c);\n";
+				_strFileData += "		}\n";
+				_strFileData += "		public	" + this.ClassName + "(" + this.ClassName + " c)\n";
 				_strFileData += "		{\n";
 				_strFileData += "			this.Clone(c);\n";
 				_strFileData += "		}\n";
