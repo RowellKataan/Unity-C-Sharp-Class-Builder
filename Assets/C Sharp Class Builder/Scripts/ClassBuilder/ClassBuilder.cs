@@ -2270,8 +2270,8 @@ namespace CBT
 				_strFileData += "		{\n";
 				_strFileData += "			get\n";
 				_strFileData += "			{\n";
-				_strFileData += "				if (_" + this.ClassName.ToLower() + "DB == null)\n";
-				_strFileData += "						_" + this.ClassName.ToLower() + "DB = Perk.LoadEntireDatabase();\n";
+				_strFileData += "				if (_" + this.ClassName.ToLower() + "DB == null || _" + this.ClassName.ToLower() + "DB.Count < 1)\n";
+				_strFileData += "						_" + this.ClassName.ToLower() + "DB = " + this.ClassName + ".LoadEntireDatabase();\n";
 				_strFileData += "				return _" + this.ClassName.ToLower() + "DB;\n";
 				_strFileData += "			}\n";
 				_strFileData += "		}\n";
@@ -2285,13 +2285,13 @@ namespace CBT
 				_strFileData += "	#region \"PUBLIC SEARCH FUNCTIONS\"\n\n";
 				if (UseUnityDatabase)
 				{
-					_strFileData += "		public	static	" + this.ClassName + "		FindByID(int intFind)\n";
+					_strFileData += "		public	new	static	" + this.ClassName + "		FindByID(int intFind)\n";
 					_strFileData += "		{\n";
 					_strFileData += "			" + this.ClassName + " c = " + this.ClassName + "DB.Find(x => x.ID == intFind);\n";
 					_strFileData += "			return c;\n";
 					_strFileData += "		}\n";
 
-					_strFileData += "		public	static	" + this.ClassName + "		FindByIndex(int intFind)\n";
+					_strFileData += "		public	new	static	" + this.ClassName + "		FindByIndex(int intFind)\n";
 					_strFileData += "		{\n";
 					_strFileData += "			" + this.ClassName + " c = " + this.ClassName + "DB.Find(x => x.Index == intFind);\n";
 					_strFileData += "			return c;\n";
@@ -2311,7 +2311,7 @@ namespace CBT
 
 					if (IsANetworkObject)
 					{
-						_strFileData		+= "		public	static	" + this.ClassName + "		FindByNetID(int intFind)\n		{\n";
+						_strFileData		+= "		public	new	static	" + this.ClassName + "		FindByNetID(int intFind)\n		{\n";
 						_strFileData		+= "			if (" + this.ClassName + "Manager.Instance != null)\n";
 						_strFileData	+= "				return " + this.ClassName + "Manager.Instance." + this.ClassName + "s.Find(x => x.NetID == intFind);\n";
 						_strFileData		+= "			else\n				return null;\n";
@@ -2327,7 +2327,7 @@ namespace CBT
 								if (Variables[i].IsIndex && !blnIndexedID)
 								{
 									blnIndexedID = true;
-									_strFileData		+= "		public	static	" + this.ClassName + "		FindByID(" + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
+									_strFileData		+= "		public	new	static	" + this.ClassName + "		FindByID(" + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
 									_strFileData		+= "			if (" + this.ClassName + "Manager.Instance != null)\n";
 									if (Variables[i].VarType.ToLower() == "string")
 										_strFileData	+= "				return " + this.ClassName + "Manager.Instance." + this.ClassName + "s.Find(x => x." + Variables[i].Name + ".ToLower() == " + Variables[i].GetPrivatePrefix + "Find.ToLower());\n";
@@ -2338,7 +2338,7 @@ namespace CBT
 								}
 								if (Variables[i].IsIndex || Variables[i].IsSearchable)
 								{
-									_strFileData		+= "		public	static	" + this.ClassName + "		FindBy" + Variables[i].Name + "(" + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
+									_strFileData		+= "		public	new	static	" + this.ClassName + "		FindBy" + Variables[i].Name + "(" + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
 									_strFileData		+= "			if (" + this.ClassName + "Manager.Instance != null)\n";
 									if (Variables[i].VarType.ToLower() == "string")
 										_strFileData	+= "				return " + this.ClassName + "Manager.Instance." + this.ClassName + "s.Find(x => x." + Variables[i].Name + ".ToLower() == " + Variables[i].GetPrivatePrefix + "Find.ToLower());\n";
@@ -2351,7 +2351,7 @@ namespace CBT
 								if (Variables[i].IsIndex && !blnIndexedID)
 								{
 									blnIndexedID = true;
-									_strFileData		+= "		public	static	" + this.ClassName + "		FindByID(List<" + this.ClassName + "> lib, " + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
+									_strFileData		+= "		public	new	static	" + this.ClassName + "		FindByID(List<" + this.ClassName + "> lib, " + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
 									_strFileData		+= "			if (" + this.ClassName + "Manager.Instance != null)\n";
 									if (Variables[i].VarType.ToLower() == "string")
 										_strFileData	+= "				return lib.Find(x => x." + Variables[i].Name + ".ToLower() == " + Variables[i].GetPrivatePrefix + "Find.ToLower());\n";
@@ -2362,7 +2362,7 @@ namespace CBT
 								}
 								if (Variables[i].IsIndex || Variables[i].IsSearchable)
 								{
-									_strFileData		+= "		public	static	" + this.ClassName + "		FindBy" + Variables[i].Name + "(List<" + this.ClassName + "> lib, " + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
+									_strFileData		+= "		public	new	static	" + this.ClassName + "		FindBy" + Variables[i].Name + "(List<" + this.ClassName + "> lib, " + GetPropertyType(Variables[i]) + " " + Variables[i].GetPrivatePrefix + "Find)\n		{\n";
 									_strFileData		+= "			if (" + this.ClassName + "Manager.Instance != null)\n";
 									if (Variables[i].VarType.ToLower() == "string")
 										_strFileData	+= "				return lib.Find(x => x." + Variables[i].Name + ".ToLower() == " + Variables[i].GetPrivatePrefix + "Find.ToLower());\n";
