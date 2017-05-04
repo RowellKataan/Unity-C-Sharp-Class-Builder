@@ -34,6 +34,7 @@ namespace CBT
 			protected	bool									_blnIsInitializing		= false;
 			private		bool									_blnIsInitialized			= false;
 			protected	bool									_blnNote							= false;
+			protected	Vector2								_v2ScrollEPosition		= Vector2.zero;
 
 			[System.NonSerialized]
 			protected	BaseDatabase<EnumBuilder>	_dbEnums		= null;
@@ -318,7 +319,7 @@ namespace CBT
 			{
 				GUILayout.BeginHorizontal("Box", GUILayout.ExpandWidth(true));
 
-				// HANDLE DESCRIPTOR DATABASE TYPES --- BELOW IS A SAMPLE
+				// HANDLE DESCRIPTOR DATABASE TYPES
 /*
 				if (editorDB is BaseDatabase<BaseDescriptor>)
 				{

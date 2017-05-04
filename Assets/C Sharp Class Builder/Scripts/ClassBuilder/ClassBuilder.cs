@@ -1239,7 +1239,7 @@ namespace CBT
 				_strFileData		+= "				{\n";
 				_strFileData		+= "					_intSelected		= theObject.ID;\n";
 				_strFileData		+= "				}\n";
-				_strFileData		+= "				_v2ScrollPosition = EditorGUILayout.BeginScrollView(_v2ScrollPosition, GUILayout.ExpandHeight(true));\n";
+				_strFileData		+= "				_v2ScrollEPosition = EditorGUILayout.BeginScrollView(_v2ScrollEPosition, GUILayout.ExpandHeight(true));\n";
 
 				int intCnt = 0;
 				for (int i = 0; i < Variables.Count; i++)

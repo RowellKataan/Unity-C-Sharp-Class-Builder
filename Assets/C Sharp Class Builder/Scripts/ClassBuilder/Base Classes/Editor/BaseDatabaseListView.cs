@@ -24,7 +24,7 @@ namespace CBT
 
 		#region "PRIVATE VARIABLES"
 
-			protected	Vector2		_v2ScrollPosition			= Vector2.zero;
+			protected	Vector2		_v2ScrollLPosition			= Vector2.zero;
 			protected	bool			_blnSaveCtrlKey				= false;
 
 		#endregion
@@ -33,7 +33,7 @@ namespace CBT
 
 			protected						void			ListView()
 			{
-				_v2ScrollPosition = EditorGUILayout.BeginScrollView(_v2ScrollPosition, GUILayout.ExpandHeight(true), GUILayout.Width(MINIMUM_LIST_WIDTH));
+				_v2ScrollLPosition = EditorGUILayout.BeginScrollView(_v2ScrollLPosition, GUILayout.ExpandHeight(true), GUILayout.Width(MINIMUM_LIST_WIDTH));
 				DisplayList();
 				EditorGUILayout.EndScrollView();
 			}

@@ -115,7 +115,7 @@ namespace CBT
 				EditorGUILayout.LabelField("This Control allows you to create custom enums.");
 				EditorGUILayout.Separator();
 
-				_v2ScrollPosition = EditorGUILayout.BeginScrollView(_v2ScrollPosition, GUILayout.ExpandHeight(true));
+				_v2ScrollEPosition = EditorGUILayout.BeginScrollView(_v2ScrollEPosition, GUILayout.ExpandHeight(true));
 
 				if (!theObject.IsInitialized && theObject.Name != "" && GUILayout.Button("INITIALIZE ENUM"))
 						theObject.ResetVariables();

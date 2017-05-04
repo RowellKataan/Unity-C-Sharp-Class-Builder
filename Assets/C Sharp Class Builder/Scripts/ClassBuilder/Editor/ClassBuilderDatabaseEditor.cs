@@ -138,7 +138,7 @@ namespace CBT
 																	 "then be found in the Directory below.");
 				EditorGUILayout.Separator();
 
-				_v2ScrollPosition = EditorGUILayout.BeginScrollView(_v2ScrollPosition, GUILayout.ExpandHeight(true));
+				_v2ScrollEPosition = EditorGUILayout.BeginScrollView(_v2ScrollEPosition, GUILayout.ExpandHeight(true));
 
 
 				// CLASS NAME AND NAMESPACE
@@ -460,7 +460,7 @@ namespace CBT
 					EditorGUILayout.LabelField("<color=yellow>Obj\nName</color>", GUILayout.Width(40), GUILayout.Height(32));
 					EditorStyles.label.richText = false;
 					EditorStyles.label.stretchWidth = true;
-					if (theObject.HasNamedVariable || _strNewVar.Trim().ToLower() == "name")
+					if (theObject.HasNamedVariable)
 					{
 						_blnIsName = false;
 						EditorGUILayout.Toggle(	"", false, GUILayout.Width(40));
