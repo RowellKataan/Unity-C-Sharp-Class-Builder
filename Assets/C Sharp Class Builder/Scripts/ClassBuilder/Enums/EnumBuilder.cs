@@ -29,11 +29,11 @@ namespace CBT
 			[SerializeField]	public	int					IntValue			= -1;
 			[SerializeField]	public	bool				IsDeleted			= false;	
 
-			public						EnumProperty(string strName = "")
+			public						EnumProperty(string strName = "", int newValue = -1)
 			{
 				Index			= 0;
 				Name			= strName;
-				IntValue	= -1;
+				IntValue	= newValue;
 				IsDeleted = false;
 			}
 			public	string		Serialize()
@@ -252,13 +252,21 @@ namespace CBT
 			}
 			public	void				AddProperty(EnumProperty prop)
 			{
+				// DETERMINE IF THE INTVALUE ALREADY EXISTS UNDER A DIFFERENT ENUM NAME
+				int i = Variables.FindIndex(x => x.IntValue == prop.IntValue && x.Name.ToLower() != prop.Name.ToLower());
+				if (i >= 0)
+				{
+					Debug.LogError("The IntValue (" + prop.IntValue.ToString() + ") already exists for Enum (" + Variables[i].Name + ").");
+					return;
+				}
+
 				// DETERMINE INDEX
 				int intIndex = 0;
 				if (Variables.Count > 0)
 						intIndex = Variables.Max(x => x.Index) + 1;
 
 				// REMOVE PROPERTY IF THE NAME ALREADY EXISTS, AND IT IS DELETED
-				int i = Variables.FindIndex(x => x.Name.ToLower() == prop.Name.ToLower() );		// && x.IsDeleted
+				i = Variables.FindIndex(x => x.Name.ToLower() == prop.Name.ToLower() );		// && x.IsDeleted
 				if (i >= 0)
 				{
 					if (prop.IntValue < 0)
@@ -282,7 +290,7 @@ namespace CBT
 			{
 				_strEnumName					= "";
 				_vars = new List<EnumProperty>();
-				_vars.Add(new EnumProperty("NONE"));
+				_vars.Add(new EnumProperty("NONE", 0));
 				_blnInitialized = true;
 			}
 			public	void				ResetVariables()
@@ -292,7 +300,7 @@ namespace CBT
 
 				// INIT THE VAR LIST
 				_vars = new List<EnumProperty>();
-				_vars.Add(new EnumProperty("NONE"));
+				_vars.Add(new EnumProperty("NONE", 0));
 
 				// SET CLASS AS INITIALIZED
 				_blnInitialized = true;

@@ -150,6 +150,7 @@ namespace CBT
 
 					// ---- INT VALUE (IF APPLICABLE)
 					_intNewValue = EditorGUILayout.IntField("Int Value: ", _intNewValue);
+												 EditorGUILayout.LabelField(" ", "(-1 = auto-numbering)");
 
 					// ---- ADD BUTTON
 					if (GUILayout.Button("ADD", GUILayout.Width(75)))
