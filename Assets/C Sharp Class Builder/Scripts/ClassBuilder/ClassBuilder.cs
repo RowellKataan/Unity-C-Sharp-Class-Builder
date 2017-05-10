@@ -1718,7 +1718,7 @@ namespace CBT
 								_strFileData	+= "		public	enum	" + Variables[i].VarType.Substring(4) + " : int	{ ";
 								eb = dbEnums.GetByName(Variables[i].VarType.Substring(4));
 								for (int e = 0; e < eb.Variables.Count; e++)
-									_strFileData += eb.Variables[e].Name + "=" + e.ToString() + ", ";
+									_strFileData += eb.Variables[e].Name + "=" + eb.Variables[e].IntValue.ToString() + ", ";
 								_strFileData = _strFileData.Substring(0, _strFileData.Length - 2);
 								_strFileData	+= " };\n";
 							}
@@ -1796,7 +1796,7 @@ namespace CBT
 					_strFileData += "					Debug.Log(\"Export Failure! \" + DATABASE_FILE_DIRECTORY + \"/\" + strExportFile);\n";
 					_strFileData += "			}\n";
 					_strFileData += "		}\n";
-					_strFileData += "		public	static	CBT.BaseDatabase<" + this.ClassName + "Base>		Import()\n";
+					_strFileData += "		public	static	CBT.BaseDatabase<" + this.ClassName + "Base>			Import()\n";
 					_strFileData += "		{\n";
 					_strFileData += "			TextAsset ta = (TextAsset) Resources.Load(DATABASE_FILE_DIRECTORY.Replace(\"Resources/\", \"\") + \"/\" + DATABASE_FILE_NAME.Replace(\".asset\", \"\") + \"Data\", typeof(TextAsset));\n";
 					_strFileData += "			string strIn = \"\";\n";

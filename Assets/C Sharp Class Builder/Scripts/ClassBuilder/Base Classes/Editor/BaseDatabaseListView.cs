@@ -5,6 +5,8 @@
 //       Created: Mar 26, 2016
 //	
 // VERS 1.0.000 : Mar 26, 2016 : Original File Created. Released for Unity 3D.
+//			1.0.001 : May 04, 2017 :	Added separate variables to track ListView scroll position and
+//																editor scroll position (_v2ScrollLPosition and _v2ScrollEPosition).
 //
 // ===========================================================================================================
 
@@ -24,7 +26,7 @@ namespace CBT
 
 		#region "PRIVATE VARIABLES"
 
-			protected	Vector2		_v2ScrollLPosition			= Vector2.zero;
+			protected	Vector2		_v2ScrollLPosition		= Vector2.zero;
 			protected	bool			_blnSaveCtrlKey				= false;
 
 		#endregion
