@@ -1,4 +1,14 @@
-﻿using UnityEngine;
+﻿// ===========================================================================================================
+//
+// Class/Library: Utility Class
+//        Author: Michael Marzilli   ( http://www.linkedin.com/in/michaelmarzilli , http://www.develteam.com/Developer/Rowell/Portfolio )
+//       Created: Jun 10, 2016
+//	
+// VERS 1.0.000 : Jun 10, 2016 : Original File Created. Released for Unity 3D.
+//
+// ===========================================================================================================
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Reflection;

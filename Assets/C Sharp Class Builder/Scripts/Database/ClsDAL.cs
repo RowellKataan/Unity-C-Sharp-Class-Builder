@@ -61,7 +61,6 @@ public class ClsDAL
 
 		// SQL REPORTING
 		private string		  _strErrors					= "";
-		private int				  _intErrorCount			= 0;
 		private string		  _strSQLqueries			= "";
 		private Util.Timer	_queryTimer					= null;
 		private int					_intQueryCount			= 0;
@@ -1864,7 +1863,6 @@ public class ClsDAL
 			public void   ResetErrors()
 			{
 				_strErrors = "";
-				_intErrorCount = 0;
 			}
 			public string Errors
 			{

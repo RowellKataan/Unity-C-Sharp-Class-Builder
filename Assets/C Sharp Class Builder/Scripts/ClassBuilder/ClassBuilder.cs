@@ -1004,7 +1004,7 @@ namespace CBT
 				if (Namespace		!= "")
 					_strFileData	+= "namespace " + this.Namespace + "\n{\n\n";
 				_strFileData		+= "[System.Serializable]\n";
-				_strFileData		+= "public class " + this.ClassName + "Database : CBT.BaseDatabase<" + this.ClassName + "Base>\n{\n\n";
+				_strFileData		+= "public class " + this.ClassName + "Database : CBT.BaseDatabase<" + this.ClassName + ">\n{\n\n";
 
 				_strFileData		+= "		#region \"PUBLIC PROPERTIES\"\n\n";
 				_strFileData		+= "			public	override		int		MaxID\n";
@@ -1012,7 +1012,7 @@ namespace CBT
 				_strFileData		+= "				get\n";
 				_strFileData		+= "				{\n";
 				_strFileData		+= "					if (database == null)\n";
-				_strFileData		+= "							database = new List<" + this.ClassName + "Base>();\n";
+				_strFileData		+= "							database = new List<" + this.ClassName + ">();\n";
 				_strFileData		+= "					if (Count > 0)\n";
 				_strFileData		+= "						return database[Count - 1].ID;\n";
 				_strFileData		+= "					else \n";
@@ -1023,19 +1023,19 @@ namespace CBT
 
 				_strFileData		+= "		#region \"PUBLIC METHODS\"\n\n";
 				_strFileData		+= "			#if UNITY_EDITOR\n";
-				_strFileData		+= "			public	override		void						Add(				" + this.ClassName + "Base				added)\n";
+				_strFileData		+= "			public	override		void						Add(				" + this.ClassName + "				added)\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				added.ID = MaxID + 1;\n";
 				_strFileData		+= "				added.Index = Count;\n";
 				_strFileData		+= "				base.Add(added);\n";
 				_strFileData		+= "			}\n";
-				_strFileData		+= "			public	override		void						Insert(			int			index, " + this.ClassName + "Base added)\n";
+				_strFileData		+= "			public	override		void						Insert(			int			index, " + this.ClassName + " added)\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				added.ID = MaxID + 1;\n";
 				_strFileData		+= "				added.Index = index;\n";
 				_strFileData		+= "				base.Insert(index, added);\n";
 				_strFileData		+= "			}\n";
-				_strFileData		+= "			public	override		void						Save(				" + this.ClassName + "Base				added)\n";
+				_strFileData		+= "			public	override		void						Save(				" + this.ClassName + "				added)\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				if (added.ID < 1 || added.Index < 0)\n";
 				_strFileData		+= "				{\n";
@@ -1054,7 +1054,7 @@ namespace CBT
 				_strFileData		+= "				}\n";
 				_strFileData		+= "				EditorUtility.SetDirty(this);\n";
 				_strFileData		+= "			}\n";
-				_strFileData		+= "			public	override		void						Save(				int			index, " + this.ClassName + "Base added)\n";
+				_strFileData		+= "			public	override		void						Save(				int			index, " + this.ClassName + " added)\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				if (index < 0)\n";
 				_strFileData		+= "				{\n";
@@ -1068,30 +1068,30 @@ namespace CBT
 				_strFileData		+= "			#endif\n";
 				_strFileData		+= "			public	override		void						Init()\n";
 				_strFileData		+= "			{\n";
-				_strFileData		+= "				database = " + this.ClassName + "Base.LoadDatabase().database;\n";
+				_strFileData		+= "				database = " + this.ClassName + ".LoadDatabase().database;\n";
 				_strFileData		+= "			}\n";
-				_strFileData		+= "			public	override		" + this.ClassName + "Base			GetByIndex(	int			index)\n";
+				_strFileData		+= "			public	override		" + this.ClassName + "			GetByIndex(	int			index)\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				try\n";
 				_strFileData		+= "				{\n";
 				_strFileData		+= "					if (!IsDatabaseLoaded)\n";
-				_strFileData		+= "						database = " + this.ClassName + "Base.LoadDatabase().database;\n";
+				_strFileData		+= "						database = " + this.ClassName + ".LoadDatabase().database;\n";
 				_strFileData		+= "					if (database != null && (database.ElementAt(index)) != null)\n";
 				_strFileData		+= "							database.ElementAt(index).Index = index;\n";
 				_strFileData		+= "					else\n";
 				_strFileData		+= "							index = -1;\n";
 				_strFileData		+= "				} catch { index = -1; }\n";
 				_strFileData		+= "				if (index < 0)\n";
-				_strFileData		+= "					return new " + this.ClassName + "Base();\n";
+				_strFileData		+= "					return new " + this.ClassName + "();\n";
 				_strFileData		+= "				else\n";
 				_strFileData		+= "					return base.GetByIndex(index);\n";
 				_strFileData		+= "			}\n";
-				_strFileData		+= "			public	override		" + this.ClassName + "Base			GetByID(		int			intID)\n";
+				_strFileData		+= "			public	override		" + this.ClassName + "			GetByID(		int			intID)\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				if (intID < 0)\n";
 				_strFileData		+= "					return null;\n";
 				_strFileData		+= "				if (!IsDatabaseLoaded)\n";
-				_strFileData		+= "					database = " + this.ClassName + "Base.LoadDatabase().database;\n";
+				_strFileData		+= "					database = " + this.ClassName + ".LoadDatabase().database;\n";
 				_strFileData		+= "				return database.Find(p => p.ID == intID);\n";
 				_strFileData		+= "			}\n\n";
 				_strFileData		+= "		#endregion\n\n";
@@ -1162,7 +1162,7 @@ namespace CBT
 
 				if (Namespace		!= "")
 					_strFileData	+= "namespace " + this.Namespace + "\n{\n\n";
-				_strFileData		+= "	public partial class " + this.ClassName + "DatabaseEditor : CBT.BaseDatabaseEditor<" + this.ClassName + "DatabaseEditor, " + this.ClassName + "Database, " + this.ClassName + "Base>\n{\n\n";
+				_strFileData		+= "	public partial class " + this.ClassName + "DatabaseEditor : CBT.BaseDatabaseEditor<" + this.ClassName + "DatabaseEditor, " + this.ClassName + "Database, " + this.ClassName + ">\n{\n\n";
 
 				// PRIVATE/PROTECTED CONSTANTS
 				_strFileData		+= "		#region \"PRIVATE/PROTECTED CONSTANTS\"\n\n";
@@ -1234,7 +1234,7 @@ namespace CBT
 				_strFileData		+= "			protected override	void							DisplayEditor()\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				DisplayEditorTop();\n";
-				_strFileData		+= "				" + this.ClassName + "Base theObject = ((" + this.ClassName + "Base)(object)selected);\n";
+				_strFileData		+= "				" + this.ClassName + " theObject = ((" + this.ClassName + ")(object)selected);\n";
 				_strFileData		+= "				if (_intSelected != theObject.ID)\n";
 				_strFileData		+= "				{\n";
 				_strFileData		+= "					_intSelected		= theObject.ID;\n";
@@ -1343,7 +1343,7 @@ namespace CBT
 				_strFileData		+= "					if (selected != null" + ((HasNamedVariable) ? " && selected.Name.Trim() != \"\"" : "") + ")\n";
 				_strFileData		+= "					{\n";
 				_strFileData		+= "						selected.DateUpdated = System.DateTime.Now;\n";
-				_strFileData		+= "						((CBT.BaseDatabase<" + this.ClassName + "Base>)(object)editorDB).Save(theObject);\n";
+				_strFileData		+= "						((CBT.BaseDatabase<" + this.ClassName + ">)(object)editorDB).Save(theObject);\n";
 				_strFileData		+= "						selected = null;\n";
 				_strFileData		+= "						_intSelected = -1;\n";
 				_strFileData		+= "						GUI.FocusControl(\"\");\n";
@@ -1354,16 +1354,16 @@ namespace CBT
 				_strFileData		+= "			protected override	void							DisplayCount()\n";
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				try { GUILayout.BeginHorizontal(\"Box\", GUILayout.ExpandWidth(true));  } catch { }\n";
-				_strFileData		+= "				GUILayout.Label(\"Record Count: \" + ((CBT.BaseDatabase<" + this.ClassName + "Base>)(object)editorDB).Count.ToString() + \" - (Hold CTRL to Delete a Record)\");\n";
+				_strFileData		+= "				GUILayout.Label(\"Record Count: \" + ((CBT.BaseDatabase<" + this.ClassName + ">)(object)editorDB).Count.ToString() + \" - (Hold CTRL to Delete a Record)\");\n";
 				_strFileData		+= "				if (selected == null)\n";
 				_strFileData		+= "				{\n";
 				_strFileData		+= "					if (GUILayout.Button(\"Add New\"))\n";
 				_strFileData		+= "					{\n";
-				_strFileData		+= "						selected = (" + this.ClassName + "Base)(object)new " + this.ClassName + "Base();\n";
+				_strFileData		+= "						selected = (" + this.ClassName + ")(object)new " + this.ClassName + "();\n";
 				_strFileData		+= "						_intSelected = selected.ID;\n";
 				_strFileData		+= "					}\n";
 				_strFileData		+= "					if (GUILayout.Button(\"Export\"))\n";
-				_strFileData		+= "						" + this.ClassName + "Base.Export();\n";
+				_strFileData		+= "						" + this.ClassName + ".Export();\n";
 				_strFileData		+= "				}\n";
 				_strFileData		+= "				GUILayout.EndHorizontal();\n";
 				_strFileData		+= "			}\n\n";
@@ -1403,7 +1403,7 @@ namespace CBT
 
 				if (Namespace		!= "")
 					_strFileData	+= "namespace " + this.Namespace + "\n{\n\n";
-				_strFileData		+= "	public partial class " + this.ClassName + "DatabaseEditor : CBT.BaseDatabaseEditor<" + this.ClassName + "DatabaseEditor, " + this.ClassName + "Database, " + this.ClassName + "Base>\n{\n\n";
+				_strFileData		+= "	public partial class " + this.ClassName + "DatabaseEditor : CBT.BaseDatabaseEditor<" + this.ClassName + "DatabaseEditor, " + this.ClassName + "Database, " + this.ClassName + ">\n{\n\n";
 
 				_strFileData		+= "		#region \"PRIVATE FUNCTIONS\"\n\n";
 				_strFileData		+= "			protected	override	void	DisplayList()\n";
@@ -1432,7 +1432,7 @@ namespace CBT
 				_strFileData		+= "							if (GUILayout.Button(\"?\", GUILayout.Width(16), GUILayout.Height(16)))\n";
 				_strFileData		+= "							{\n";
 				_strFileData		+= "								GUI.FocusControl(\"\");\n";
-				_strFileData		+= "								selected = new " + this.ClassName + "Base(editorDB.GetByIndex(i));\n";
+				_strFileData		+= "								selected = new " + this.ClassName + "(editorDB.GetByIndex(i));\n";
 				_strFileData		+= "							}\n";
 				_strFileData		+= "							if (blnRep)\n";
 				_strFileData		+= "									Repaint();\n";
@@ -1443,7 +1443,7 @@ namespace CBT
 				_strFileData		+= "							{\n";
 				_strFileData		+= "								if (EditorUtility.DisplayDialog(\"Delete this Record?\", \"Are you sure that you want to delete \\\"\" + editorDB.GetByIndex(i).Name + \"\\\"?\", \"Delete\", \"Cancel\"))\n";
 				_strFileData		+= "								{\n";
-				_strFileData		+= "									selected = new " + this.ClassName + "Base(editorDB.GetByName(editorDB.database[i].Name));\n";
+				_strFileData		+= "									selected = new " + this.ClassName + "(editorDB.GetByName(editorDB.database[i].Name));\n";
 				_strFileData		+= "									editorDB.Delete(selected.Index);\n";
 				_strFileData		+= "									GUI.FocusControl(\"\");\n";
 				_strFileData		+= "									selected = null;\n";
@@ -1458,7 +1458,7 @@ namespace CBT
 				_strFileData		+= "							if (GUILayout.Button(st, \"Label\", GUILayout.ExpandWidth(true)))\n";
 				_strFileData		+= "							{\n";
 				_strFileData		+= "								GUI.FocusControl(\"\");\n";
-				_strFileData		+= "								selected = new " + this.ClassName + "Base(editorDB.GetByIndex(i));\n";
+				_strFileData		+= "								selected = new " + this.ClassName + "(editorDB.GetByIndex(i));\n";
 				_strFileData		+= "							}\n";
 				_strFileData		+= "							if (blnRep)\n";
 				_strFileData		+= "								Repaint();\n";
@@ -1527,7 +1527,7 @@ namespace CBT
 				if (UseUnity)
 				{
 					if (UseUnityDatabase)
-					{ 
+					{
 						_strFileData	+= "[System.Serializable]\n";
 						_strFileData	+= "public class " + strFileName + "\n{\n\n";
 					} else if (IsANetworkObject) {
@@ -2244,7 +2244,12 @@ namespace CBT
 				_strFileData += "\n\n";
 
 				if (UseUnity)
+				{
+					_strFileData	+= "#if UNITY_EDITOR\n";
+					_strFileData	+= "using UnityEditor;\n";
+					_strFileData	+= "#endif\n";
 					_strFileData	+= "using UnityEngine;\n";
+				}
 				if (UseUnity && UseUnityUI)
 					_strFileData	+= "using UnityEngine.UI;\n";
 				if (IsANetworkObject)
@@ -2257,6 +2262,14 @@ namespace CBT
 
 				if (Namespace		!= "")
 					_strFileData	+= "namespace " + this.Namespace + "\n{\n\n";
+
+				
+				if (UseUnity && UseUnityDatabase)
+				_strFileData		+= "[System.Serializable]\n";
+
+
+
+
 				_strFileData		+= "public class " + this.ClassName + " : " + this.ClassName + "Base\n{\n\n";
 
 				// BUILD PRIVATE VARIABLE REGION		-----------------------------------------------
@@ -2281,6 +2294,90 @@ namespace CBT
 				_strFileData += "	#region \"PUBLIC PROPERTIES\"\n\n";
 				_strFileData += "\n	#endregion\n\n";
 
+				// BUILD UNITY DATABASE FUNCTIONS REGION		-----------------------------------------------
+				if (UseUnityDatabase)
+				{
+					_strFileData += "	#region \"PUBLIC STATIC FUNCTIONS\"\n\n";
+					_strFileData += "		public	new	static	CBT.BaseDatabase<" + this.ClassName + ">			LoadDatabase()\n";
+					_strFileData += "		{\n";
+					_strFileData += "			#if !UNITY_EDITOR\n\n";
+					_strFileData += "			return Import();\n\n";
+					_strFileData += "			#else\n\n";
+					_strFileData += "			CBT.BaseDatabase<" + this.ClassName + "> db = null;\n";
+					_strFileData += "			string strDBfullPath = @\"Assets/\" + DATABASE_FILE_DIRECTORY + \"/\" + DATABASE_FILE_NAME;\n";
+					_strFileData += "			try\n";
+					_strFileData += "			{\n";
+					_strFileData += "				// db = ScriptableObject.CreateInstance<CBT.BaseDatabase<" + this.ClassName + ">>();\n";
+					_strFileData += "				if (!System.IO.Directory.Exists(@\"Assets/\" + DATABASE_FILE_DIRECTORY))\n";
+					_strFileData += "				{\n";
+					_strFileData += "					System.IO.Directory.CreateDirectory(@\"Assets/\" + DATABASE_FILE_DIRECTORY);\n";
+					_strFileData += "				} else {\n";
+					_strFileData += "					db = AssetDatabase.LoadAssetAtPath(strDBfullPath, typeof(CBT.BaseDatabase<" + this.ClassName + ">)) as CBT.BaseDatabase<" + this.ClassName + ">;\n";
+					_strFileData += "				}\n";
+					_strFileData += "				if (db == null)\n";
+					_strFileData += "				{\n";
+					_strFileData += "					db = ScriptableObject.CreateInstance<CBT.BaseDatabase<" + this.ClassName + ">>();\n";
+					_strFileData += "					AssetDatabase.CreateAsset(db, strDBfullPath);\n";
+					_strFileData += "					AssetDatabase.SaveAssets();\n";
+					_strFileData += "					AssetDatabase.Refresh();\n";
+					_strFileData += "				}\n";
+					_strFileData += "				db.IsDatabaseLoaded = (db != null);\n";
+					_strFileData += "				// INITIALIZE INDEX\n";
+					_strFileData += "				if (db != null && db.database != null && db.database.Count > 0)\n";
+					_strFileData += "				{\n";
+					_strFileData += "					for (int i = 0; i < db.database.Count; i++)\n";
+					_strFileData += "					{\n";
+					_strFileData += "						db.database[i].Index = 0;\n";
+					_strFileData += "					}\n";
+					_strFileData += "				}\n";
+					_strFileData += "			} catch {\n";
+					_strFileData += "				Debug.LogError(\"Error Loading \" + db.name.ToString() + \" \\\"\" + DATABASE_FILE_NAME + \"\\\"  (\" + strDBfullPath + \")\");\n";
+					_strFileData += "				return null;\n";
+					_strFileData += "			}\n";
+					_strFileData += "			return db;\n";
+					_strFileData += "			#endif\n";
+					_strFileData += "		}\n";
+					_strFileData += "		public	new	static	void														Export()\n";
+					_strFileData += "		{\n";
+					_strFileData += "			CBT.BaseDatabase<" + this.ClassName + "> db = LoadDatabase();\n";
+					_strFileData += "			if (db != null && db.Count > 0)\n";
+					_strFileData += "			{\n";
+					_strFileData += "				string strOut = \"\";\n";
+					_strFileData += "				string strExportFile = DATABASE_FILE_NAME.Replace(\".asset\", \"\") + \"Data.txt\";\n";
+					_strFileData += "				for (int i = 0; i < db.database.Count; i++)\n";
+					_strFileData += "				{\n";
+					_strFileData += "					strOut += db.database[i].Serialize() + \"\\n\";\n";
+					_strFileData += "				}\n";
+					_strFileData += "				if (Util.WriteTextFile(DATABASE_FILE_DIRECTORY, strExportFile, strOut))\n";
+					_strFileData += "					Debug.Log(\"Export Success! \" + DATABASE_FILE_DIRECTORY + \"/\" + strExportFile);\n";
+					_strFileData += "				else\n";
+					_strFileData += "					Debug.Log(\"Export Failure! \" + DATABASE_FILE_DIRECTORY + \"/\" + strExportFile);\n";
+					_strFileData += "			}\n";
+					_strFileData += "		}\n";
+					_strFileData += "		public	new	static	CBT.BaseDatabase<" + this.ClassName + ">			Import()\n";
+					_strFileData += "		{\n";
+					_strFileData += "			TextAsset ta = (TextAsset) Resources.Load(DATABASE_FILE_DIRECTORY.Replace(\"Resources/\", \"\") + \"/\" + DATABASE_FILE_NAME.Replace(\".asset\", \"\") + \"Data\", typeof(TextAsset));\n";
+					_strFileData += "			string strIn = \"\";\n";
+					_strFileData += "			if (ta != null)\n";
+					_strFileData += "				strIn = ta.text;\n";
+					_strFileData += "			CBT.BaseDatabase<" + this.ClassName + "> db = new CBT.BaseDatabase<" + this.ClassName + ">();\n";
+					_strFileData += "			string[] strSpl1 = strIn.Split('\\n');\n";
+					_strFileData += "			foreach (string st in strSpl1)\n";
+					_strFileData += "			{\n";
+					_strFileData += "				if (st.Trim() != \"\")\n";
+					_strFileData += "				{\n";
+					_strFileData += "					" + this.ClassName + " b = new " + this.ClassName + "();\n";
+					_strFileData += "					b.Deserialize(st);\n";
+					_strFileData += "					db.database.Add(b);\n";
+					_strFileData += "				}\n";
+					_strFileData += "			}\n";
+					_strFileData += "			db.IsDatabaseLoaded = true;\n";
+					_strFileData += "			return db;\n";
+					_strFileData += "		}\n";
+					_strFileData += "\n";
+					_strFileData += "	#endregion\n\n";
+				}
+
 				// BUILD PUBLIC SEARCH FUNCTIONS REGION			---------------------------------------
 				_strFileData += "	#region \"PUBLIC SEARCH FUNCTIONS\"\n\n";
 				if (UseUnityDatabase)
@@ -2300,7 +2397,7 @@ namespace CBT
 					_strFileData += "		public	static	List<" + this.ClassName + ">	LoadEntireDatabase()\n";
 					_strFileData += "		{\n";
 					_strFileData += "			List<" + this.ClassName + "> l	= new List<" + this.ClassName + ">();\n";
-					_strFileData += "			CBT.BaseDatabase<" + this.ClassName + "Base> d = " + this.ClassName + "Base.LoadDatabase();\n\n";
+					_strFileData += "			CBT.BaseDatabase<" + this.ClassName + "> d = " + this.ClassName + ".LoadDatabase();\n\n";
 					_strFileData += "			for (int i = 0; i < d.Count; i++)\n";
 					_strFileData += "				l.Add(new " + this.ClassName + "(d.database[i]));\n\n";
 					_strFileData += "			return l;\n";

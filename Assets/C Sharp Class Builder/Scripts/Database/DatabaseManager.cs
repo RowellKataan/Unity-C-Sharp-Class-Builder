@@ -77,7 +77,6 @@ public class DatabaseManager : MonoBehaviour
 		private		int								_sql_save_cmds					=	0;
 		private		int								_sql_char_cnt						= 0;
 		private		float							_sql_save_delay					= 0.002f;
-		private		string						_settingsFileLocation		=	"";
 
 	#endregion
 

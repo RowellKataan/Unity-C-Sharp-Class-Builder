@@ -28,8 +28,8 @@ namespace CBT
 
 		#region "PRIVATE VARIABLES"
 
-			[System.NonSerialized]
-			private		string					_strNewName				= "";
+//		[System.NonSerialized]
+//		private		string					_strNewName				= "";
 			[System.NonSerialized]
 			private		string					_strNewVar				=	"";
 			[System.NonSerialized]
@@ -94,11 +94,13 @@ namespace CBT
 			{
 				return;
 
+				/*
 				// DISPLAY ANY FILTERS ON THE DATA AVAILABLE IN THE LISTVIEW
 				GUILayout.BeginVertical("box");
 				EditorGUILayout.LabelField("FILTERS: ");
 
 				GUILayout.EndVertical();
+				*/
 			}
 			protected	override	void							DisplayEditor()
 			{

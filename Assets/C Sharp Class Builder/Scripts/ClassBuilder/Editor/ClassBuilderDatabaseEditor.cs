@@ -20,8 +20,8 @@ namespace CBT
 
 		#region "PRIVATE/PROTECTED CONSTANTS"
 
-			protected const			int			MINIMUM_WIDTH						= 825;
-			protected const			int			MINIMUM_HEIGHT					= 600;
+			protected	new const	int			MINIMUM_WIDTH						= 825;
+			protected	new const	int			MINIMUM_HEIGHT					= 600;
 			private 	const			string	WINDOW_TITLE						= "Class Builder";
 			private		const			string	MENU_NAME								= "Tools/Class Builder";
 			private		const			string	dDATABASE_FILE_NAME			= @"ClassScriptDatabase.asset";	
@@ -113,11 +113,13 @@ namespace CBT
 			{
 				return;
 
+				/*			
 				// DISPLAY ANY FILTERS ON THE DATA AVAILABLE IN THE LISTVIEW
 				GUILayout.BeginVertical("box");
 				EditorGUILayout.LabelField("FILTERS: ");
 
 				GUILayout.EndVertical();
+				*/
 			}
 			protected override	void							DisplayEditor()
 			{
