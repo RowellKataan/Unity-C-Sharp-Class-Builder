@@ -28,8 +28,6 @@ namespace CBT
 
 		#region "PRIVATE VARIABLES"
 
-//		[System.NonSerialized]
-//		private		string					_strNewName				= "";
 			[System.NonSerialized]
 			private		string					_strNewVar				=	"";
 			[System.NonSerialized]

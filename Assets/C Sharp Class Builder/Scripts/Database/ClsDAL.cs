@@ -43,29 +43,29 @@ public class ClsDAL
 		private SqlParameterCollection	_SQLSPparams;
 
 		// SQL SERVER CONNECTION STATES
-		private bool		_blnIsOnline						= false;
-		private bool		_blnIsConnecting				= false;
-		private bool		_blnIsProcessing				= false;
-		private bool		_blnIsDisposed					= false;
-		private bool		_blnIsFailed						= false;
+		private bool				_blnIsOnline						= false;
+		private bool				_blnIsConnecting				= false;
+		private bool				_blnIsProcessing				= false;
+		private bool				_blnIsDisposed					= false;
+		private bool				_blnIsFailed						= false;
 
 		// SQL SERVER/DATABASE INFORMATION
-		private bool		_blnUseWindowsAccount		= false;
-		private bool		_blnKeepConnectionOpen	= false;
-		private	string	_strDBserver;
-		private	string	_strDBdatabase;
-		private	string	_strDBuser;
-		private	string	_strDBpassword;
-		private int			_intDBport;
-		private string	_strServerIPaddress			= "";
+		private bool				_blnUseWindowsAccount		= false;
+		private bool				_blnKeepConnectionOpen	= false;
+		private	string			_strDBserver;
+		private	string			_strDBdatabase;
+		private	string			_strDBuser;
+		private	string			_strDBpassword;
+		private int					_intDBport;
+		private string			_strServerIPaddress			= "";
 
 		// SQL REPORTING
-		private string		  _strErrors					= "";
-		private string		  _strSQLqueries			= "";
-		private Util.Timer	_queryTimer					= null;
-		private int					_intQueryCount			= 0;
-		private float				_fQueryAverage			= 0;
-		private float				_fQueryLast					= 0;
+		private string		  _strErrors							= "";
+		private string		  _strSQLqueries					= "";
+		private Util.Timer	_queryTimer							= null;
+		private int					_intQueryCount					= 0;
+		private float				_fQueryAverage					= 0;
+		private float				_fQueryLast							= 0;
 
 	#endregion
 

@@ -604,7 +604,7 @@ namespace CBT
 			{
 				get
 				{
-					return Variables.FindIndex(x => x.IsNameVar == true) >= 0;
+					return Variables.FindIndex(x => x.IsNameVar == true || x.Name.ToUpper() == "NAME") >= 0;
 				}
 			}
 
@@ -673,6 +673,8 @@ namespace CBT
 						case 2:
 							return this.ClassName.ToUpper();
 						// YOU CAN ADD YOUR OWN NAMING CONVENTIONS
+
+
 						default:
 							return "tbl" + this.ClassName;
 					}
@@ -689,6 +691,8 @@ namespace CBT
 						case 2:
 							return this.ClassName.ToUpper() + "_";
 						// YOU CAN ADD YOUR OWN NAMING CONVENTIONS
+
+
 						default:
 							return "sp" + this.ClassName;
 					}
@@ -835,10 +839,6 @@ namespace CBT
 					_strFileData += "GO\n\n";
 					_strFileData += "SET QUOTED_IDENTIFIER ON\n";
 					_strFileData += "GO\n\n";
-//				_strFileData += "-- =============================================\n";
-//				_strFileData += "-- Create date: " + System.DateTime.Now.ToString("MMM dd yyyy - hh:mm:ss tt") + "\n";
-//				_strFileData += "-- Description: " + GetStoredProcedureName + "GetByID\n";
-//				_strFileData += "-- =============================================\n";
 					_strFileData += "CREATE PROCEDURE [dbo].[" + GetStoredProcedureName + "GetByID] (\n";
  					_strFileData += "	@ID					INT = 0,\n";
 					_strFileData += "	@ACTIVEONLY	BIT = FALSE\n";
@@ -898,10 +898,6 @@ namespace CBT
 					_strFileData += "GO\n\n";
 					_strFileData += "SET QUOTED_IDENTIFIER ON\n";
 					_strFileData += "GO\n\n";
-//				_strFileData += "-- =============================================\n";
-//				_strFileData += "-- Create date: " + System.DateTime.Now.ToString("MMM dd yyyy - hh:mm:ss tt") + "\n";
-//				_strFileData += "-- Description: " + GetStoredProcedureName + "Update\n";
-//				_strFileData += "-- =============================================\n";
 					_strFileData += "CREATE PROCEDURE [dbo].[" + GetStoredProcedureName + "Update]( \n";
 					for (int i = 0; i < Variables.Count; i++)
 					{
@@ -1228,7 +1224,6 @@ namespace CBT
 				_strFileData		+= "			{\n";
 				_strFileData		+= "				GUILayout.BeginVertical(\"box\");\n";
 				_strFileData		+= "				EditorGUILayout.LabelField(\"FILTERS: \");\n";
-//			_strFileData		+= "//			_intFilterSkillType			= EditorGUILayout.Popup(\"Skill: \",		_intFilterSkillType,		FilterSkillTypeArray);\n";
 				_strFileData		+= "				GUILayout.EndVertical();\n";
 				_strFileData		+= "			}\n";
 				_strFileData		+= "			protected override	void							DisplayEditor()\n";
@@ -1412,7 +1407,7 @@ namespace CBT
 				_strFileData		+= "				savedStyle.alignment = TextAnchor.MiddleLeft;\n";
 				_strFileData		+= "				for (int i = 0; i < editorDB.Count; i++)\n";
 				_strFileData		+= "				{\n";
-				_strFileData		+= "					bool blnFound = true;			// (_intFilterSkillType < 1);\n";
+				_strFileData		+= "					bool blnFound = true;\n";				// (_intFilterSkillType < 1);\n";
 /*
 				_strFileData		+= "//				if (!blnFound)\n";
 				_strFileData		+= "//				{\n";
@@ -1503,7 +1498,6 @@ namespace CBT
 				_strFileData += "//		This is the Base Class file.  It is not intended to be modified.\n";
 				_strFileData += "//		If you need to make changes or additions, please modify the " + this.ClassName + ".cs File.\n";
 				_strFileData += "\n\n";
-
 
 				if (UseUnity)
 				{

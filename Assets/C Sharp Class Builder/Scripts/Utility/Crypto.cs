@@ -21,9 +21,7 @@ using System.Text;
 public class Crypto
 {
 
-	#region "PRIVATE VARIABLES"
-
-		// CHANGE THESE DEFAULT VALUES TO SOMETHING UNIQUE
+	#region "PRIVATE VARIABLES	--	CHANgE THESE SETTINGS TO UNIQUE VALUES FOR YOUR APPLICATION"
 
 		//                                           |      ENCRYPTION KEY SIZE       |  (32 Characters)
 		//                                           |================================|
