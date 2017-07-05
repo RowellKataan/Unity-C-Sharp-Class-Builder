@@ -10,6 +10,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using System.Data;
 using System.Collections;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -341,6 +342,28 @@ public class Util : MonoBehaviour
 			return t.position.ToString() + "|" + t.rotation.ToString();
 		}
 
+		public static float						ClampAngle(float value, float min, float max)
+		{
+			float clampAroundAngle = 0;
+			float angle = value - (clampAroundAngle + 180);
+
+			while (angle < 0) 
+			{
+        angle += 360;
+			}
+			angle = Mathf.Repeat(angle, 360);
+
+			return Mathf.Clamp(angle - 180, min, max) + 360 + clampAroundAngle;
+		}
+
+		public	static double					Evaluate(string expression)  
+		{  
+			System.Data.DataTable table = new System.Data.DataTable();  
+			table.Columns.Add("expression", string.Empty.GetType(), expression);  
+			System.Data.DataRow row = table.NewRow();  
+			table.Rows.Add(row);  
+			return double.Parse((string)row["expression"]);  
+		}
 		private static long						Fix(float Number) 
 		{ 
 			if (Number >= 0) 

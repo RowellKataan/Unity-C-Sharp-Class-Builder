@@ -3236,6 +3236,23 @@ namespace CBT
 				// ADD THE PROPERTY TO THE LIST
 				Variables.Add(prop);
 			}
+			public	void				MoveProperty(int oldIndex, int newIndex)
+			{
+				ClassProperty item = Variables[oldIndex];
+				Variables.RemoveAt(oldIndex);
+//			if (newIndex > oldIndex) newIndex--; 
+				Variables.Insert(newIndex, item);
+/*
+				int start		= (oldIndex < newIndex) ? oldIndex : newIndex;
+				int finish	= (oldIndex > newIndex) ? newIndex : oldIndex;
+				start		= Mathf.Clamp(start, 0, Variables.Count - 1);
+				finish	= Mathf.Clamp(finish, 0, Variables.Count - 1);
+				for (int i = start; i <= finish; i++)
+				{
+					Variables[i].Index = i;
+				}
+*/
+			}
 
 			public	void				ResetClass()
 			{

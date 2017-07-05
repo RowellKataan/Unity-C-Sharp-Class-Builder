@@ -547,6 +547,7 @@ namespace CBT
 					EditorGUILayout.LabelField("<color=yellow>Sync\nVar</color>",				GUILayout.Width(40),	GUILayout.Height(32));
 					EditorGUILayout.LabelField("<color=yellow>Obj\nName</color>",				GUILayout.Width(40),	GUILayout.Height(32));
 					EditorGUILayout.LabelField("\n<color=yellow>Default Value</color>",	GUILayout.Width(125),	GUILayout.Height(32));
+					EditorGUILayout.LabelField("<color=yellow>\nMove</color>",					GUILayout.Width(35),	GUILayout.Height(32));
 					EditorStyles.label.richText = false;
 					EditorStyles.label.stretchWidth = true;
 					EditorGUILayout.EndHorizontal();
@@ -602,6 +603,33 @@ namespace CBT
 								EditorGUILayout.LabelField(CreateEnumDefaultPopUpListByID(DBenums, w)[Util.ConvertToInt(theObject.Variables[i].StartingValue)],	GUILayout.Width(125));
 							} else
 								EditorGUILayout.LabelField(theObject.Variables[i].StartingValue, GUILayout.Width(125));
+
+							if (i > 4)
+							{
+								if (i > 5)
+								{
+									if (GUILayout.Button("^", GUILayout.Width(20), GUILayout.MaxWidth(20)))
+									{
+										theObject.MoveProperty(i, i - 1);
+										GUI.changed = true;
+									}
+								} else
+									GUILayout.Button(" ", GUILayout.Width(20), GUILayout.MaxWidth(20));
+
+								if (i > 4 && i < theObject.Variables.Count - 1)
+								{
+									if (GUILayout.Button("v", GUILayout.Width(20), GUILayout.MaxWidth(20)))
+									{
+										theObject.MoveProperty(i, i + 1);
+										GUI.changed = true;
+									}
+								} else
+									GUILayout.Button(" ", GUILayout.Width(20), GUILayout.MaxWidth(20));
+							} else {
+								// DUMMY BUTTONS FOR MANDATORY, UNMOVEABLE FIELDS
+								GUILayout.Button(" ", GUILayout.Width(20), GUILayout.MaxWidth(20));
+								GUILayout.Button(" ", GUILayout.Width(20), GUILayout.MaxWidth(20));
+							}
 
 							GUI.color						= defaultColor;
 							GUI.backgroundColor	= defaultBGcolor;
