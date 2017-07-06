@@ -7,3 +7,5 @@ The tool can also create all the SQL statements to generate tables and stored pr
 Settings can also generate a Unity Asset Database, so the user can create their own database without the use of SQL.
 
 Run as a tool from the main menu bar.
+
+<img src="ScreenShot-1.png" al="Sample Class">
