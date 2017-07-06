@@ -2261,9 +2261,6 @@ namespace CBT
 				if (UseUnity && UseUnityDatabase)
 				_strFileData		+= "[System.Serializable]\n";
 
-
-
-
 				_strFileData		+= "public class " + this.ClassName + " : " + this.ClassName + "Base\n{\n\n";
 
 				// BUILD PRIVATE VARIABLE REGION		-----------------------------------------------
@@ -2397,6 +2394,24 @@ namespace CBT
 					_strFileData += "			return l;\n";
 					_strFileData += "		}\n";
 
+					_strFileData += "		public	void								MoveIndex(int oldIndex, int newIndex)\n";
+					_strFileData += "		{\n";
+					_strFileData += "			if (oldIndex == newIndex)\n";
+					_strFileData += "				return;\n";
+					_strFileData += "			" + this.ClassName + " item = " + this.ClassName + "DB[oldIndex];\n";
+					_strFileData += "			" + this.ClassName + "DB.RemoveAt(oldIndex);\n";
+//				_strFileData += "			if (newIndex > oldIndex) newIndex--;\n";
+					_strFileData += "			" + this.ClassName + "DB.Insert(newIndex, item);\n";
+					_strFileData += "			int start		= (oldIndex < newIndex) ? oldIndex : newIndex;\n";
+					_strFileData += "			int finish	= (oldIndex > newIndex) ? newIndex : oldIndex;\n";
+					_strFileData += "			start		= Mathf.Clamp(start,  0,     " + this.ClassName + "DB.Count - 1);\n";
+					_strFileData += "			finish	= Mathf.Clamp(finish, start, " + this.ClassName + "DB.Count - 1);\n";
+					_strFileData += "			for (int i = start; i <= finish; i++)\n";
+					_strFileData += "			{\n";
+					_strFileData += "				" + this.ClassName + "DB[i].Index = i;\n";
+					_strFileData += "			}\n";
+					_strFileData += "		}\n";
+
 				} else {
 					// USE AN OBJECT MANAGER TO FIND RECORDS
 
@@ -2404,7 +2419,7 @@ namespace CBT
 					{
 						_strFileData		+= "		public	new	static	" + this.ClassName + "		FindByNetID(int intFind)\n		{\n";
 						_strFileData		+= "			if (" + this.ClassName + "Manager.Instance != null)\n";
-						_strFileData	+= "				return " + this.ClassName + "Manager.Instance." + this.ClassName + "s.Find(x => x.NetID == intFind);\n";
+						_strFileData		+= "				return " + this.ClassName + "Manager.Instance." + this.ClassName + "s.Find(x => x.NetID == intFind);\n";
 						_strFileData		+= "			else\n				return null;\n";
 						_strFileData		+= "		}\n";
 					}
