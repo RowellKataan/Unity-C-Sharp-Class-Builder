@@ -68,6 +68,23 @@ namespace CBT
 			[System.NonSerialized]
 			private		string					dtTemp								= "";
 
+			[System.NonSerialized]
+			protected	string[]				_strColorList					= { "black", "blue", "clear", "cyan", "gray", "green", "grey", "magenta", "red", "white", "yellow" };
+			[System.NonSerialized]
+			protected	int							_intSelectedColor			= 0;
+
+		#endregion
+
+		#region "PRIVATE PROPERTIES"
+
+			private string[]					ColorList
+			{
+				get
+				{
+					return _strColorList;
+				}
+			}
+
 		#endregion
 
 		#region "EVENT FUNCTIONS"
@@ -429,6 +446,14 @@ namespace CBT
 							break;
 						case 9:		// "sprite"
 							break;
+						case 10:	// "color"
+							int iColor = EditorGUILayout.Popup("", _intSelectedColor, ColorList, GUILayout.Width(150));
+							if (iColor != _intSelectedColor)
+							{
+								_strStart = "Color." + ColorList[iColor];
+								_intSelectedColor = iColor;
+							}
+							break;
 					}
 					EditorGUILayout.EndVertical();
 
@@ -512,6 +537,7 @@ namespace CBT
 						_intMaxLen					= 20;
 						_intSelected				= -1;
 						_intSelectedEnum		= -1;
+						_intSelectedColor		= 0;
 						_blnSyncVar					= false;
 
 						strTemp							= "";
