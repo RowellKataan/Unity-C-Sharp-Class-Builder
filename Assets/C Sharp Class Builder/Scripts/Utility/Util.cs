@@ -511,6 +511,12 @@ public class Util : MonoBehaviour
 			}
 			return false;
 		}
+		public	static	bool					FileExists(		string strFile)
+		{
+			if (File.Exists(strFile))
+				return true;
+			return false;
+		}
 		public	static	bool					FileExists(		string strDirectory, string strFilename)
 		{
 			strDirectory = Application.dataPath + "/" + strDirectory;

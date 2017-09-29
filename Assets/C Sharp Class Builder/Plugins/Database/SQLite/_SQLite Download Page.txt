@@ -1,0 +1,4 @@
+Please visit the SQLite download page to get the latest versions (platform specific):
+
+http://www.sqlite.org/download.html
+

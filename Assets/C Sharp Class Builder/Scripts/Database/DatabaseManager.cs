@@ -5,25 +5,43 @@
 //       Created: Mar 26, 2016
 //	
 // VERS 1.0.000 : Mar 26, 2016 : Original File Created. Released for Unity 3D.
+//			1.1.001 : Sep 27, 2017 : Added functionality to support SQLite Databases.
+//															 Added functionality to support MySQL  Databases.
 //
 // ===========================================================================================================
 
-#if UNITY_EDITOR
-	#define		IS_DEBUGGING
-#else 
-	#undef		IS_DEBUGGING
+// COMPILER DIRECTIVES
+#define	USES_UNITY
+
+#if USES_UNITY
+	#if UNITY_EDITOR
+		#define		IS_DEBUGGING
+	#else 
+		#undef		IS_DEBUGGING
+	#endif
+
+	#undef	USES_APPLICATIONMANAGER		// #define = Scene has an ApplicationManager Prefab,	#undef = Scene does not have an ApplicationManager Prefab
+	#undef	USES_STATUSMANAGER				// #define = Scene has a  StatusManager Prefab,				#undef = Scene does not have a  StatusManager Prefab
 #endif
 
-#undef	USES_APPLICATIONMANAGER		// #define = Scene has an ApplicationManager Prefab,	#undef = Scene does not have an ApplicationManager Prefab
-#undef	USES_STATUSMANAGER				// #define = Scene has a  StatusManager Prefab,				#undef = Scene does not have a  StatusManager Prefab
-
-using UnityEngine;
-using System.Data;
+// REFERENCE DECLARATIONS
+using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Data;
+using System.Data.SqlClient;
+using Mono.Data.Sqlite;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+#if USES_UNITY
+using UnityEngine;
+#endif
 
+#if USES_UNITY
 [DisallowMultipleComponent]
 public class DatabaseManager : MonoBehaviour 
+#else
+public class DatabaseManager
+#endif
 {
 
 	#region "PRIVATE CONSTANTS"
@@ -57,10 +75,47 @@ public class DatabaseManager : MonoBehaviour
 		private	ApplicationManager	_app										= null;
 		#endif
 
+		#if USES_UNITY
 		[SerializeField]
+		#endif
 		private bool								_blnClientCanUse				= false;
+		#if USES_UNITY
 		[SerializeField]
+		#endif
 		private bool								_blnKeepConnectionOpen	= false;
+
+		// DEFINE THE DATABASE TYPE VARIABLE
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private ClsDAL.DBtypes			_dbType									= ClsDAL.DBtypes.MSSQL;
+		private string							_strSQLiteDBloc					= "";
+
+		// DEFINE THE DATABASE CONNECTION VARIABLES
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private string							_strDBserver;
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private int									_intDBport;
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private string							_strDBdatabase;
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private string							_strDBuser;
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private string							_strDBpassword;
+		#if USES_UNITY
+		[SerializeField]
+		#endif
+		private bool								_blnDBwindowsAcct				= false;
 
 		// DEFINE CLASS STATUS VARIABLES
 		private bool								_blnInitialized					= false;
@@ -124,6 +179,7 @@ public class DatabaseManager : MonoBehaviour
 
 	#region "PUBLIC PROPERTIES"
 
+		#if USES_UNITY
 		public	static		DatabaseManager	Instance
 		{
 			get
@@ -137,15 +193,118 @@ public class DatabaseManager : MonoBehaviour
 					_instance = (DatabaseManager)GameObject.FindObjectOfType(typeof(DatabaseManager));
 			return _instance;
 		}
+		#endif
 
-		public	string										DBserver;
-		public	int												DBport;
-		public	string										DBdatabase;
-		public	string										DBuser;
-		public	string										DBpassword;
-		public	bool											DBuseWindowsAccount	= false;
-		public	TextAsset									DBtextFile					= null;
-		public	string										DBsettingsFile			= "";
+		// MICROSOFT SQL (MSSQL) & MYSQL DATABASE VARIABLES
+		public	string										DBserver
+		{
+			get
+			{
+				return _strDBserver;
+			}
+			set
+			{
+				_strDBserver = value.Trim();
+				if (DAL != null)
+						DAL.DBserver = _strDBserver;
+			}
+		}
+		public	int												DBport
+		{
+			get
+			{
+				return _intDBport;
+			}
+			set
+			{
+				_intDBport = value;
+				if (DAL != null)
+						DAL.DBport = _intDBport;
+			}
+		}
+		public	string										DBdatabase
+		{
+			get
+			{
+				return _strDBdatabase;
+			}
+			set
+			{
+				_strDBdatabase = value.Trim();
+				if (DAL != null)
+						DAL.DBdatabase = _strDBdatabase;
+			}
+		}
+		public	string										DBuser
+		{
+			get
+			{
+				return _strDBuser;
+			}
+			set
+			{
+				_strDBuser = value.Trim();
+				if (DAL != null)
+						DAL.DBuser = _strDBuser;
+			}
+		}
+		public	string										DBpassword
+		{
+			get
+			{
+				return _strDBpassword;
+			}
+			set
+			{
+				_strDBpassword = value.Trim();
+				if (DAL != null)
+						DAL.DBpassword = _strDBpassword;
+			}
+		}
+		public	bool											DBuseWindowsAccount
+		{
+			get
+			{
+				return _blnDBwindowsAcct;
+			}
+			set
+			{
+				_blnDBwindowsAcct = value;
+				if (DAL != null)
+						DAL.UseWindowsAccount = _blnDBwindowsAcct;
+			}
+		}
+
+		// SQLITE DATABASE VARIABLES
+		public	string										SQLiteDBfileLocation
+		{
+			get
+			{
+				return _strSQLiteDBloc;
+			}
+			set
+			{
+				DAL.SQLiteDBfileLocation = value;
+				_strSQLiteDBloc = DAL.SQLiteDBfileLocation;
+			}
+		}
+
+
+		public	ClsDAL.DBtypes						DatabaseType
+		{
+			get
+			{
+				return _dbType;
+			}
+			set
+			{
+				_dbType = value;
+			}
+		}
+		public	string										DBsettingsFile				= "";
+		#if USES_UNITY
+		public	TextAsset									DBtextFile						= null;
+		#endif
 
 		public	ClsDAL										DAL
 		{
@@ -153,7 +312,18 @@ public class DatabaseManager : MonoBehaviour
 			{
 				if (_DAL == null)
 				{
-					_DAL = new ClsDAL();
+					if (_dbType == ClsDAL.DBtypes.SQLITE && SQLiteDBfileLocation != "")
+						_DAL = new ClsDAL(_dbType, SQLiteDBfileLocation);
+					else
+					{
+						_DAL = new ClsDAL(_dbType);
+						_DAL.DBserver		= DBserver;
+						_DAL.DBport			= DBport;
+						_DAL.DBdatabase	= DBdatabase;
+						_DAL.DBuser			= DBuser;
+						_DAL.DBpassword	= DBpassword;
+						_DAL.UseWindowsAccount	= DBuseWindowsAccount;
+					}
 					_DAL.KeepConnectionOpen = this.KeepConnectionOpen;
 				}
 				return _DAL;
@@ -184,6 +354,16 @@ public class DatabaseManager : MonoBehaviour
 			get
 			{
 				return _dtDBresponse;
+			}
+		}
+		public	string										DBerrors
+		{
+			get
+			{
+				if (_DAL != null)
+					return _DAL.Errors;
+				else
+					return "";
 			}
 		}
 
@@ -315,14 +495,14 @@ public class DatabaseManager : MonoBehaviour
 		private void								Start()
 		{
 		}
-		private IEnumerator					InitializeDatabase()
+		private IEnumerator					InitializeDatabase(bool blnReadSettingsFile = true)
 		{	
 			// DO NOT RE-INITIALIZE IF ALREADY OPEN
 			if (!_blnInitialized)
 			{ 
 				// CONNECT TO DATABASE.  IF NOT CONNECTED IN TIMEOUT PERIOD, CLOSE APPLICATION
 				Util.Timer clock = new Util.Timer();
-				OpenDatabase();
+				OpenDatabase(blnReadSettingsFile);
 				bool blnCont = IsConnected;
 				clock.StartTimer();
 				while (clock.GetTime < CONNECTION_TIMEOUT && !blnCont)
@@ -369,178 +549,420 @@ public class DatabaseManager : MonoBehaviour
 
 	#region "PUBLIC FUNCTIONS"
 
-		public	void										OpenDatabase()
-		{
-				#if USES_STATUSMANAGER
-				Status.UpdateStatus();
-				#endif
+		#region "CONNECTION FUNCTIONS"
 
-				if (!IsServer && !ClientsCanUse)
-					return;
+			public	void										InitializeDAL()
+			{
+				DisposeDatabase();
+				_blnInitialized = false;
+				_DAL = null;
+				if ((IsServer || ClientsCanUse) && !_blnInitialized)
+					StartCoroutine(InitializeDatabase());
+			}
 
-				if (IsInitialized && (IsConnectedCheck || IsConnecting))
-					return;
-
-				// CHECK FOR SETTINGS FROM TEXT FILE
-				bool			blnOkayToProcessTextFile	= false;
-				bool			blnCouldClientLogIn				= _blnClientCanUse;
-				string[]	strLines = null;
-				
-				// FORCE THE CONFIGURATION FILE THROUGH
-				DBsettingsFile = "";
-				if (DBtextFile != null)
-					DBsettingsFile = DBtextFile.name + ".txt";
-
-				if (!_blnDBisReadIn && DBsettingsFile != "")
-				{
-					if (!Util.FileExists("", DBsettingsFile))
-					{
-						#if USES_STATUSMANAGER
-						Status.Status			= "Unable to find file \"" + DBsettingsFile + "\".";
-						#endif
-						_blnClientCanUse	= false;
-					} else {
-						strLines = Util.ReadTextFile("", DBsettingsFile).Split('\n');
-						blnOkayToProcessTextFile = strLines != null && strLines.Length > 0;
-						#if USES_STATUSMANAGER
-						Status.Status = DBsettingsFile + " found. " + strLines.Length.ToString() + " lines Read In.";
-						#endif
-					}
-
-					if (DBtextFile != null && !blnOkayToProcessTextFile)
-					{
-						strLines = DBtextFile.text.Split('\n');
-						blnOkayToProcessTextFile = strLines.Length > 0;
-					}
-
-					if (blnOkayToProcessTextFile)
-					{
-						DBport = 0;
-						if (strLines.Length > 0)
-						{
-							foreach (string st in strLines)
-							{
-								if (!st.StartsWith("//") && st.Trim() != "" && st.Contains("="))
-								{
-									string[] s = st.Trim().Split('=');
-									if (s.Length > 2)
-									{
-										for (int i = 2; i < s.Length; i++)
-										s[1] += "=" + s[i];
-									}
-									switch (s[0].Trim().ToLower())
-									{
-										case "server":
-											DBserver = s[1].Trim();
-											break;
-										case "database":
-											DBdatabase = s[1].Trim();
-											break;
-										case "username":
-											DBuser = Crypto.Decrypt(s[1].Trim());
-											if (DBuser == "")
-													DBuser = s[1].Trim();
-											break;
-										case "password":
-											DBpassword = Crypto.Decrypt(s[1].Trim());
-											if (DBpassword == "")
-													DBpassword = s[1].Trim();
-											break;
-										case "port":
-											try { DBport = int.Parse(s[1].Trim()); }
-											catch { DBport = 0; }
-											break;
-										case "retries":
-											try { MAX_SQL_RETRIES = int.Parse(s[1].Trim()); }
-											catch { MAX_SQL_RETRIES = 0; }
-											break;
-										case "cmdcount":
-											try { MAX_SQL_SAVE_CMDS = int.Parse(s[1].Trim()); }
-											catch { MAX_SQL_SAVE_CMDS = 0; }
-											break;
-										case "charcount":
-											try { MAX_SQL_CHAR_COUNT = int.Parse(s[1].Trim()); }
-											catch { MAX_SQL_CHAR_COUNT = 0; }
-											break;
-										case "savedelay":
-											try { SQL_SAVE_DELAY = float.Parse(s[1].Trim()); }
-											catch { SQL_SAVE_DELAY = 0; }
-											break;
-									}
-								}
-							}
-						}
-						DBuseWindowsAccount = (DBuser == "" && DBpassword == "");
-					}
-					_blnDBisReadIn = true;
-				}
-
-				try
-				{
-					if (DBserver.Trim() != "" && DBdatabase.Trim() != "" && ((DBuser.Trim() != "" && DBpassword.Trim() != "") || DBuseWindowsAccount))
-					{
-						if (!_blnClientCanUse)
-								 _blnClientCanUse = blnCouldClientLogIn;
-						if (DBuseWindowsAccount)
-							DAL.OpenConnection(DBserver, DBdatabase, DBport);
-						else
-						{
-							string strUSR = Crypto.Decrypt(DBuser);
-							string strPWD = Crypto.Decrypt(DBpassword);
-							strUSR = (strUSR == "") ? DBuser : strUSR;
-							strPWD = (strPWD == "") ? DBpassword : strPWD;
-							DAL.OpenConnection(DBserver, DBdatabase, strUSR, strPWD, DBport);
-						}
-						_blnInitialized = true;
-						if (DAL.IsConnectedCheck)
-						{
-							#if USES_STATUSMANAGER
-							Status.Status = "Unable to Connect to the Database.";
-							Status.UpdateStatus();
-							#endif
-							_blnClientCanUse = false;
-						}
-					} else {
-						#if IS_DEBUGGING
-						#if USES_APPLICATIONMANAGER
-						App.AddToDebugLog("-- Missing Database Connection Information.");	
-						#endif
-						#endif
-					}
-				} catch {
+			public	void										OpenDatabase(bool blnReadSettingsFile = true)
+			{
 					#if USES_STATUSMANAGER
-					Status.Status = "Unable to Connect to the Database.";
 					Status.UpdateStatus();
 					#endif
-					_blnClientCanUse = false;
-				}
 
+					if (!IsServer && !ClientsCanUse)
+						return;
+
+					if (IsInitialized && (IsConnectedCheck || IsConnecting))
+						return;
+
+					// CHECK FOR SETTINGS FROM TEXT FILE
+					bool			blnOkayToProcessTextFile	= false;
+					bool			blnCouldClientLogIn				= _blnClientCanUse;
+					string[]	strLines = null;
+				
+					// FORCE THE CONFIGURATION FILE THROUGH
+					if (blnReadSettingsFile)
+					{
+						DBsettingsFile = "";
+						if (DBtextFile != null)
+							DBsettingsFile = DBtextFile.name + ".txt";
+
+						if (!_blnDBisReadIn && DBsettingsFile != "")
+						{
+							if (!Util.FileExists("", DBsettingsFile))
+							{
+								#if USES_STATUSMANAGER
+								Status.Status			= "Unable to find file \"" + DBsettingsFile + "\".";
+								#endif
+								_blnClientCanUse	= false;
+							} else {
+								strLines = Util.ReadTextFile("", DBsettingsFile).Split('\n');
+								blnOkayToProcessTextFile = strLines != null && strLines.Length > 0;
+								#if USES_STATUSMANAGER
+								Status.Status = DBsettingsFile + " found. " + strLines.Length.ToString() + " lines Read In.";
+								#endif
+							}
+
+							if (DBtextFile != null && !blnOkayToProcessTextFile)
+							{
+								strLines = DBtextFile.text.Split('\n');
+								blnOkayToProcessTextFile = strLines.Length > 0;
+							}
+
+							if (blnOkayToProcessTextFile)
+							{
+								DBport = 0;
+								if (strLines.Length > 0)
+								{
+									foreach (string st in strLines)
+									{
+										if (!st.StartsWith("//") && st.Trim() != "" && st.Contains("="))
+										{
+											string[] s = st.Trim().Split('=');
+											if (s.Length > 2)
+											{
+												for (int i = 2; i < s.Length; i++)
+												s[1] += "=" + s[i];
+											}
+											switch (s[0].Trim().ToLower())
+											{
+												case "server":
+													DBserver = s[1].Trim();
+													break;
+												case "database":
+													DBdatabase = s[1].Trim();
+													break;
+												case "username":
+													DBuser = Crypto.Decrypt(s[1].Trim());
+													if (DBuser == "")
+															DBuser = s[1].Trim();
+													break;
+												case "password":
+													DBpassword = Crypto.Decrypt(s[1].Trim());
+													if (DBpassword == "")
+															DBpassword = s[1].Trim();
+													break;
+												case "port":
+													try { DBport = int.Parse(s[1].Trim()); }
+													catch { DBport = 0; }
+													break;
+												case "retries":
+													try { MAX_SQL_RETRIES = int.Parse(s[1].Trim()); }
+													catch { MAX_SQL_RETRIES = 0; }
+													break;
+												case "cmdcount":
+													try { MAX_SQL_SAVE_CMDS = int.Parse(s[1].Trim()); }
+													catch { MAX_SQL_SAVE_CMDS = 0; }
+													break;
+												case "charcount":
+													try { MAX_SQL_CHAR_COUNT = int.Parse(s[1].Trim()); }
+													catch { MAX_SQL_CHAR_COUNT = 0; }
+													break;
+												case "savedelay":
+													try { SQL_SAVE_DELAY = float.Parse(s[1].Trim()); }
+													catch { SQL_SAVE_DELAY = 0; }
+													break;
+												case "sqlitedbfile":
+													try { SQLiteDBfileLocation = s[1].Trim(); }
+													catch { SQLiteDBfileLocation = ""; }
+													break;
+											}
+										}
+									}
+								}
+								DBuseWindowsAccount = (DBuser == "" && DBpassword == "");
+							}
+							_blnDBisReadIn = true;
+						}
+					}
+
+
+					try
+					{
+						switch (_dbType)
+						{
+							case ClsDAL.DBtypes.MSSQL:
+								if (DBserver.Trim() != "" && DBdatabase.Trim() != "" && ((DBuser.Trim() != "" && DBpassword.Trim() != "") || DBuseWindowsAccount))
+								{
+									if (!_blnClientCanUse)
+											 _blnClientCanUse = blnCouldClientLogIn;
+									if (DBuseWindowsAccount)
+										DAL.OpenConnection(DBserver, DBdatabase, DBport);
+									else
+									{
+										string strUSR = Crypto.Decrypt(DBuser);
+										string strPWD = Crypto.Decrypt(DBpassword);
+										strUSR = (strUSR == "") ? DBuser : strUSR;
+										strPWD = (strPWD == "") ? DBpassword : strPWD;
+										DAL.OpenConnection(DBserver, DBdatabase, strUSR, strPWD, DBport);
+									}
+									_blnInitialized = true;
+									if (DAL.IsConnectedCheck)
+									{
+										#if USES_STATUSMANAGER
+										Status.Status = "Unable to Connect to the Database.";
+										Status.UpdateStatus();
+										#endif
+										_blnClientCanUse = false;
+									}
+								} else {
+									#if IS_DEBUGGING
+									#if USES_APPLICATIONMANAGER
+									App.AddToDebugLog("-- Missing Database Connection Information.");	
+									#endif
+									#endif
+								}
+								break;
+							case ClsDAL.DBtypes.MYSQL:
+								if (DBserver.Trim() != "" && DBdatabase.Trim() != "" && DBuser.Trim() != "" && DBpassword.Trim() != "")
+								{
+									if (!_blnClientCanUse)
+											 _blnClientCanUse = blnCouldClientLogIn;
+
+									string strUSR = Crypto.Decrypt(DBuser);
+									string strPWD = Crypto.Decrypt(DBpassword);
+									strUSR = (strUSR == "") ? DBuser : strUSR;
+									strPWD = (strPWD == "") ? DBpassword : strPWD;
+									DAL.OpenConnection(DBserver, DBdatabase, strUSR, strPWD, DBport);
+
+									_blnInitialized = true;
+									if (DAL.IsConnectedCheck)
+									{
+										#if USES_STATUSMANAGER
+										Status.Status = "Unable to Connect to the Database.";
+										Status.UpdateStatus();
+										#endif
+										_blnClientCanUse = false;
+									}
+								} else {
+									#if IS_DEBUGGING
+									#if USES_APPLICATIONMANAGER
+									App.AddToDebugLog("-- Missing Database Connection Information.");	
+									#endif
+									#endif
+								}
+								break;
+							case ClsDAL.DBtypes.SQLITE:
+								if (SQLiteDBfileLocation.Trim() != "")
+								{
+									DAL.OpenConnection(SQLiteDBfileLocation);
+									_blnInitialized = true;
+									if (DAL.IsConnectedCheck)
+									{
+										#if USES_STATUSMANAGER
+										Status.Status = "Unable to Connect to the Database.";
+										Status.UpdateStatus();
+										#endif
+										_blnClientCanUse = false;
+									}
+								} else {
+									#if IS_DEBUGGING
+									#if USES_APPLICATIONMANAGER
+									App.AddToDebugLog("-- Missing Database Flie Location Information.");	
+									#endif
+									#endif
+								}
+								break;
+						}
+					
+					} catch {
+						#if USES_STATUSMANAGER
+						Status.Status = "Unable to Connect to the Database.";
+						Status.UpdateStatus();
+						#endif
+						_blnClientCanUse = false;
+					}
+
+					#if USES_STATUSMANAGER
+					Status.UpdateStatus();
+					#endif
+			}
+			public	void										CloseDatabase()
+			{
+				if (_DAL != null && _DAL.IsConnectedCheck)
+						_DAL.CloseConnection();
 				#if USES_STATUSMANAGER
 				Status.UpdateStatus();
 				#endif
-		}
-		public	void										CloseDatabase()
-		{
-			if (_DAL != null && _DAL.IsConnectedCheck)
-					_DAL.CloseConnection();
-			#if USES_STATUSMANAGER
-			Status.UpdateStatus();
-			#endif
-		}
-		public	void										DisposeDatabase()
-		{
-			if (_DAL != null)
-			{
-				_DAL.CloseConnection();
-				_DAL.Dispose();
-				_DAL = null;
 			}
-		}
+			public	void										DisposeDatabase()
+			{
+				if (_DAL != null)
+				{
+					_DAL.CloseConnection();
+					_DAL.Dispose();
+					_DAL = null;
+				}
+			}
+
+		#endregion
+
+		#region "PARAMETER FUNCTIONS"
+
+			public void AddParam(string strParamName, string   strParamValue)
+			{
+				DAL.AddParam(strParamName, strParamValue);
+			}
+			public void AddParam(string strParamName, int      intParamValue)
+			{
+				DAL.AddParam(strParamName, intParamValue);
+			}
+			public void AddParam(string strParamName, decimal  decParamValue)
+			{
+				DAL.AddParam(strParamName, decParamValue);
+			}
+			public void AddParam(string strParamName, float    fParamValue)
+			{
+				DAL.AddParam(strParamName, fParamValue);
+			}
+			public void AddParam(string strParamName, double   decParamValue)
+			{
+				DAL.AddParam(strParamName, decParamValue);
+			}
+			public void AddParam(string strParamName, long     lngParamValue)
+			{
+				DAL.AddParam(strParamName, lngParamValue);
+			}
+			public void AddParam(string strParamName, DateTime dateParamValue)
+			{
+				DAL.AddParam(strParamName, dateParamValue);
+			}
+			public void AddParam(string strParamName, bool     blnParamValue)
+			{
+				DAL.AddParam(strParamName, blnParamValue);
+			}
+			public void AddParam(string strParamName, byte[]	 buffer)
+			{
+				DAL.AddParam(strParamName, buffer);
+			}
+			public void AddParam(string strParamName, DbType   sType)
+			{
+				DAL.AddParam(strParamName, sType);
+			}
+			public void AddParam(string strParamName, SqlDbType  sType)
+			{
+				DAL.AddParam(strParamName, sType);
+			}
+			public void AddParam(string strParamName, SqlDbType  sType, int varSize)
+			{
+				DAL.AddParam(strParamName, sType, varSize);
+			}
+			public void AddParam(string strParamName, MySqlDbType  sType)
+			{
+				DAL.AddParam(strParamName, sType);
+			}
+			public void AddParam(string strParamName, MySqlDbType  sType, int varSize)
+			{
+				DAL.AddParam(strParamName, sType, varSize);
+			}
+			public void ClearParams()
+			{
+				DAL.ClearParams();
+			}
+
+		#endregion
+
+		#region "DIRECT SQL FUNCTIONS"
+
+			public DataTable GetSQLSelectDataTable(	string strSQL)
+			{
+				return DAL.GetSQLSelectDataTable(strSQL);
+			}
+			public string    GetSQLSelectString(		string strSQL)
+			{
+				return DAL.GetSQLSelectString(strSQL);
+			}
+			public int       GetSQLSelectInt(				string strSQL)
+			{
+				return DAL.GetSQLSelectInt(strSQL);
+			}
+			public decimal   GetSQLSelectDecimal(		string strSQL)
+			{
+				return DAL.GetSQLSelectDecimal(strSQL);
+			}
+			public float     GetSQLSelectFloat(			string strSQL)
+			{
+				return DAL.GetSQLSelectFloat(strSQL);
+			}
+			public double    GetSQLSelectDouble(		string strSQL)
+			{
+				return DAL.GetSQLSelectDouble(strSQL);
+			}
+			public bool      DoSQLUpdateDelete(			string strSQL)
+			{
+				return DAL.DoSQLUpdateDelete(strSQL);
+			}
+
+		#endregion
+
+		#region "STORED PROCEDURE SELECT FUNCTIONS"
+
+			public DataTable GetSPDataTable(string strSP)
+			{
+				return DAL.GetSPDataTable(strSP);
+			}
+			public string    GetSPString(string strSP)
+			{
+				return DAL.GetSPString(strSP);
+			}
+			public int       GetSPInt(string strSP)
+			{
+				return DAL.GetSPInt(strSP);
+			}
+			public long      GetSPLong(string strSP)
+			{
+				return DAL.GetSPLong(strSP);
+			}
+			public decimal   GetSPDecimal(string strSP)
+			{
+				return DAL.GetSPDecimal(strSP);
+			}
+			public float     GetSPFloat(string strSP)
+			{
+				return DAL.GetSPFloat(strSP);
+			}
+			public byte[]    GetSPBinary(string strSP)
+			{
+				return DAL.GetSPBinary(strSP);
+			}
+			public void      ExecuteSP(string strSP)
+			{
+				DAL.ExecuteSP(strSP);
+			}
+
+		#endregion
+
+		#region "STORED PROCEDURE UPDATE FUNCTIONS"
+
+			public string  UpdateSPDataTable(string strSP, string  strPass)
+			{
+				return DAL.UpdateSPDataTable(strSP, strPass);
+			}
+			public int     UpdateSPDataTable(string strSP, int     intPass)
+			{
+				return DAL.UpdateSPDataTable(strSP, intPass);
+			}
+			public decimal UpdateSPDataTable(string strSP, decimal decPass)
+			{
+				return DAL.UpdateSPDataTable(strSP, decPass);
+			}
+
+		#endregion
+
+		#region "BULKCOPY / INSERT"
+
+			public void			BulkCopy(string strTableName, DataTable dtTable)
+			{
+				Job.make(DAL.BulkCopy(strTableName, dtTable));
+			}
+			public bool			InsertFromDataTable(string strSP, string strDataType, DataTable dtTable)
+			{
+				return DAL.InsertFromDataTable(strSP, strDataType, dtTable);
+			}
+
+		#endregion
 
 	#endregion
 
 	#region "SQL DATABASE IENUMERATOR FUNCTIONS"
-	
+
 		public	void							ResetIDB()
 		{
 			_strDBresponse	= "";

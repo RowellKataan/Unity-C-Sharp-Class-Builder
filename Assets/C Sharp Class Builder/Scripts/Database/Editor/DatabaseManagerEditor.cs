@@ -5,6 +5,8 @@
 //       Created: Mar 26, 2016
 //	
 // VERS 1.0.000 : Mar 26, 2016 : Original File Created. Released for Unity 3D.
+//			1.1.001 : Sep 27, 2017 : Added functionality to support SQLite Databases.
+//															 Added functionality to support MySQL  Databases.
 //
 // ===========================================================================================================
 
@@ -27,33 +29,58 @@ public class DatabaseManagerEditor : Editor
 		if (myTarget != null)
 		{
 				GUI.changed = false;
-
-				
+								
 				EditorStyles.label.fontStyle	= FontStyle.Bold;
 				EditorGUILayout.LabelField("DATABASE CONFIGURATION");
 				EditorStyles.label.fontStyle	= FontStyle.Normal;
-				myTarget.DBtextFile						= (TextAsset)EditorGUILayout.ObjectField("Override File", myTarget.DBtextFile, typeof(TextAsset), true);
-				myTarget.DBserver							= EditorGUILayout.TextField("Database Server",		myTarget.DBserver);
-				myTarget.DBport								= EditorGUILayout.IntField(	"Database Port",			myTarget.DBport);
-				myTarget.DBdatabase						= EditorGUILayout.TextField("Database Name",			myTarget.DBdatabase);
-				myTarget.DBuseWindowsAccount	= EditorGUILayout.Toggle("Use Windows Account",		myTarget.DBuseWindowsAccount);
-				if (myTarget.DBport < 1)
-						myTarget.DBport = 1433;
-				if (!myTarget.DBuseWindowsAccount)
-				{ 
-					myTarget.DBuser							= EditorGUILayout.TextField("Username",						myTarget.DBuser);
-					myTarget.DBpassword					= EditorGUILayout.PasswordField("Password",				myTarget.DBpassword);		// PasswordField
+				myTarget.DatabaseType					= (ClsDAL.DBtypes) EditorGUILayout.EnumPopup("Database Type", myTarget.DatabaseType);
+
+				EditorGUILayout.Separator();
+				EditorGUILayout.Space();
+				switch (myTarget.DatabaseType)
+				{
+					case ClsDAL.DBtypes.MSSQL:
+					case ClsDAL.DBtypes.MYSQL:
+							myTarget.DBtextFile						= (TextAsset)EditorGUILayout.ObjectField("Override File", myTarget.DBtextFile, typeof(TextAsset), true);
+							myTarget.DBserver							= EditorGUILayout.TextField("Database Server",		myTarget.DBserver);
+							myTarget.DBport								= EditorGUILayout.IntField(	"Database Port",			myTarget.DBport);
+							myTarget.DBdatabase						= EditorGUILayout.TextField("Database Name",			myTarget.DBdatabase);
+							if (myTarget.DatabaseType == ClsDAL.DBtypes.MSSQL)
+									myTarget.DBuseWindowsAccount	= EditorGUILayout.Toggle("Use Windows Account",		myTarget.DBuseWindowsAccount);
+							else
+									myTarget.DBuseWindowsAccount	= false;
+							if (myTarget.DBport < 1)
+									myTarget.DBport = (myTarget.DatabaseType == ClsDAL.DBtypes.MSSQL) ? 1433 : 3306;
+							if (!myTarget.DBuseWindowsAccount)
+							{ 
+								myTarget.DBuser							= EditorGUILayout.TextField("Username",						myTarget.DBuser);
+								myTarget.DBpassword					= EditorGUILayout.PasswordField("Password",				myTarget.DBpassword);		// PasswordField
+							}
+							break;
+					case ClsDAL.DBtypes.SQLITE:
+							myTarget.SQLiteDBfileLocation	= EditorGUILayout.TextField("Database File",			myTarget.SQLiteDBfileLocation);
+							break;
 				}
+
+				EditorGUILayout.Separator();
+				EditorGUILayout.Space();
 				myTarget.KeepConnectionOpen		= EditorGUILayout.Toggle("Keep Connection Open",	myTarget.KeepConnectionOpen);
 				myTarget.ClientsCanUse				= EditorGUILayout.Toggle(		"Client Can Use DB",	myTarget.ClientsCanUse);
-				EditorGUILayout.TextField("Encrypted Text", strDec, GUILayout.MaxHeight(75));
-				if (GUILayout.Button("Show Encryption Text"))
+
+
+				if (myTarget.DatabaseType == ClsDAL.DBtypes.MSSQL)
 				{
-					strDec  = "";
-					strDec += "Server: "   + myTarget.DBserver + "," + myTarget.DBport.ToString() + "\n";
-					strDec += "Database: " + myTarget.DBdatabase + "\n";
-					strDec += "Username: " + Crypto.Encrypt(myTarget.DBuser) + "\n";
-					strDec += "Password: " + Crypto.Encrypt(myTarget.DBpassword) + "\n";
+					EditorGUILayout.Separator();
+					EditorGUILayout.Space();
+					EditorGUILayout.TextField("Encrypted Text", strDec, GUILayout.MaxHeight(75));
+					if (GUILayout.Button("Show Encryption Text"))
+					{
+						strDec  = "";
+						strDec += "Server: "   + myTarget.DBserver + "," + myTarget.DBport.ToString() + "\n";
+						strDec += "Database: " + myTarget.DBdatabase + "\n";
+						strDec += "Username: " + Crypto.Encrypt(myTarget.DBuser) + "\n";
+						strDec += "Password: " + Crypto.Encrypt(myTarget.DBpassword) + "\n";
+					}
 				}
 
 				if (Application.isPlaying)
