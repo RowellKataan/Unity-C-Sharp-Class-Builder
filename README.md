@@ -6,6 +6,8 @@ The tool can also create all the SQL statements to generate tables and stored pr
 
 Settings can also generate a Unity Asset Database, so the user can create their own database without the use of SQL.
 
+Also included in the package is a DatabaseManager and DAL suite that allows the developer to connect to and interact with Microsoft SQL Server, MySQL and SQLite databases/servers.
+
 Run as a tool from the main menu bar.
 
 <img src="ScreenShot-1.png" al="Sample Class">
